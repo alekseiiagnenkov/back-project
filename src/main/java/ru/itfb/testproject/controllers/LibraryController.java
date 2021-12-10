@@ -2,9 +2,12 @@ package ru.itfb.testproject.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ru.itfb.testproject.entities.Author;
-import ru.itfb.testproject.entities.AuthorBook;
-import ru.itfb.testproject.entities.Book;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import ru.itfb.testproject.models.Author;
+import ru.itfb.testproject.models.AuthorBook;
+import ru.itfb.testproject.models.Book;
 import ru.itfb.testproject.repositories.AuthorBookRepository;
 import ru.itfb.testproject.repositories.AuthorRepository;
 import ru.itfb.testproject.repositories.BookRepository;
@@ -111,7 +114,6 @@ public class LibraryController {
         } else {
             logger.warn("uri is null.");
         }
-
     }
 
 }
