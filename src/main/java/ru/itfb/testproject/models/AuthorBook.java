@@ -1,4 +1,4 @@
-package ru.itfb.testproject.entities;
+package ru.itfb.testproject.models;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
