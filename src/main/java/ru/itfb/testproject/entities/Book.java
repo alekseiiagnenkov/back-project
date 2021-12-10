@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(schema="json", name ="books")
+@Table(schema="json", name="books")
 public class Book {
 
     @Id
