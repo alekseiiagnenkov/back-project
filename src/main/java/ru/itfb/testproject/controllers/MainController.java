@@ -19,9 +19,13 @@ public class MainController {
         return "login";
     }
 
+    @GetMapping("/books")
+    public String books(Model model){
+        return "books";
+    }
+
     @GetMapping("/authors")
     public String authors(Model model) {
-        model.addAttribute("");
         return "authors";
     }
 }
