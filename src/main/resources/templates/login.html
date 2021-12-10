@@ -7,16 +7,7 @@
 </head>
 <body class="text-center">
 
-<header>
-    <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
-        <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
-            <a class="me-3 py-2 text-dark text-decoration-none" href="authors">Authors</a>
-            <a class="me-3 py-2 text-dark text-decoration-none" href="#">Books</a>
-            <a class="me-3 py-2 text-dark text-decoration-none" href="about">About</a>
-            <a class="me-3 py-2 text-dark text-decoration-none" href="login">Login</a>
-        </nav>
-    </div>
-</header>
+<header th:insert="blocks/header :: header"></header>
 
 <main class="form-signin">
     <form>
