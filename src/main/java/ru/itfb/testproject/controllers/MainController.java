@@ -19,12 +19,6 @@ public class MainController {
         return "login";
     }
 
-    @GetMapping("/about")
-    public String about(Model model) {
-        model.addAttribute("");
-        return "about";
-    }
-
     @GetMapping("/authors")
     public String authors(Model model) {
         model.addAttribute("");
