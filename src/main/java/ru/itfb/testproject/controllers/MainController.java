@@ -39,6 +39,7 @@ public class MainController {
 
     @GetMapping("/books")
     public String books(Model model){
+        json();
         Iterable<Book> books = bookRepository.findAll();
         model.addAttribute("books", books);
         return "books";
