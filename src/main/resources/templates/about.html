@@ -10,11 +10,20 @@
 <header th:insert="blocks/header :: header"></header>
 
 <h2 th:inline="text" class="me-3 py-2 text-dark text-decoration-none">
-    <a>User: </a>
-    <div th:switch="${(#httpServletRequest.remoteUser)}">
-        <a th:case="null" href="login">Not authorization</a>
-        <a th:case="*">[[${(#httpServletRequest.remoteUser)}]]</a>
+
+    <div th:if="${(#httpServletRequest.remoteUser)} != null">
+        <a>User: [[${(#httpServletRequest.remoteUser)}]]</a>
+        <div th:switch="${(#httpServletRequest.isUserInRole('ADMIN'))}">
+            <a>Role: </a>
+            <a th:case="true">ADMIN</a>
+            <a th:case="false">USER</a>
+        </div>
     </div>
+
+    <div th:if="${(#httpServletRequest.remoteUser)} == null">
+        <a href="login">Not authorization !!!</a>
+    </div>
+
 </h2>
 
 </body>
