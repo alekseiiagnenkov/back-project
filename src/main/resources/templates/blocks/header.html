@@ -3,8 +3,11 @@
         <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
             <a class="me-3 py-2 text-dark text-decoration-none" href="authors">Authors</a>
             <a class="me-3 py-2 text-dark text-decoration-none" href="books">Books</a>
-            <a class="me-3 py-2 text-dark text-decoration-none" href="login">Login</a>
-            <a class="me-3 py-2 text-dark text-decoration-none" href="logout">Logout</a>
+            <a class="me-3 py-2 text-dark text-decoration-none" href="about">About</a>
+            <div th:switch="${(#httpServletRequest.remoteUser)}" class="me-3 py-2 text-dark text-decoration-none">
+                <a th:case="null" href="login">Login</a>
+                <a th:case="*" href="logout">Logout</a>
+            </div>
         </nav>
     </div>
 </div>
