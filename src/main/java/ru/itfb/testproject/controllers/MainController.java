@@ -43,17 +43,15 @@ public class MainController {
 
     @GetMapping("/")
     public String main(Model model) {
-        model.addAttribute("title", "glad to see you");
         return "main";
     }
 
     @GetMapping("/login")
     public String login(Model model) {
-        model.addAttribute("title", "glad to see you");
         return "login";
     }
 
-    @GetMapping("/books")
+    @GetMapping("books")
     public String books(Model model){
         Iterable<Book> books = bookRepository.findAll();
         model.addAttribute("books", books);
