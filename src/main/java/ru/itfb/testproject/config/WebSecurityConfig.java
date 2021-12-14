@@ -17,7 +17,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .antMatchers("/", "/home", "/books", "/book", "/authors", "/author", "/about", "/logout").permitAll()
+                    .antMatchers("/", "/home", "/books", "/book", "/authors", "/author", "/about").permitAll()
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()
@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         UserDetails user =
                 User.withDefaultPasswordEncoder()
                         .username("admin")
-                        .password("0000")
+                        .password("admin")
                         .roles("USER")
                         .build();
 
