@@ -1,5 +1,4 @@
-package ru.itfb.testproject.models;
-
+package ru.itfb.testproject.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,18 +6,20 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(schema="json", name="books")
-public class Book {
+@Table(schema="json", name="authors")
+public class Author {
 
     @Id
     @GeneratedValue
     private Long pk;
 
     private long id;
-    private String name;
-    private String author;
+    private String firstName;
+    private String lastName;
 
-    public Book() {
+
+
+    public Author() {
     }
 
     public Long getPk() {
@@ -37,19 +38,19 @@ public class Book {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }
