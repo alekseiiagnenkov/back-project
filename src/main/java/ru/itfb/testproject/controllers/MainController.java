@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.itfb.testproject.models.Author;
-import ru.itfb.testproject.models.AuthorBook;
-import ru.itfb.testproject.models.Book;
+import ru.itfb.testproject.entity.Author;
+import ru.itfb.testproject.entity.AuthorBook;
+import ru.itfb.testproject.entity.Book;
 import ru.itfb.testproject.repositories.AuthorBookRepository;
 import ru.itfb.testproject.repositories.AuthorRepository;
 import ru.itfb.testproject.repositories.BookRepository;
@@ -49,6 +49,11 @@ public class MainController {
     @GetMapping("/login")
     public String login(Model model) {
         return "login";
+    }
+
+    @GetMapping("/about")
+    public String about(Model model) {
+        return "about";
     }
 
     @GetMapping("books")
