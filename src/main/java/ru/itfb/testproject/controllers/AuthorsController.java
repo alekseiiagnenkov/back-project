@@ -13,40 +13,39 @@ import java.util.Map;
 public class AuthorsController {
 
     private int counter = 4;
-
     private List<Map<String, String>> authors = new ArrayList<>() {{
-        add(new HashMap<String, String>() {{
+        add(new HashMap<>() {{
             put("id", "1");
             put("firstName", "Lev");
             put("lastName", "Tolstoy");
         }});
-        add(new HashMap<String, String>() {{
+        add(new HashMap<>() {{
             put("id", "2");
             put("firstName", "Evgeny");
             put("lastName", "Petrov");
         }});
-        add(new HashMap<String, String>() {{
+        add(new HashMap<>() {{
             put("id", "3");
             put("firstName", "Ilya");
             put("lastName", "Ilf");
         }});
     }};
 
+    private Map<String, String> getAuthor(String id) {
+        return authors.stream()
+                .filter(author -> author.get("id").equals(id))
+                .findFirst()
+                .orElseThrow(NotFoundException::new);
+    }
+
     @GetMapping
-    public List<Map<String, String>> authors() {
+    public List<Map<String, String>> getAuthors() {
         return authors;
     }
 
     @GetMapping("{id}")
     public Map<String, String> getOne(@PathVariable String id) {
         return getAuthor(id);
-    }
-
-    private Map<String, String> getAuthor(String id) {
-        return authors.stream()
-                .filter(author -> author.get("id").equals(id))
-                .findFirst()
-                .orElseThrow(NotFoundException::new);
     }
 
     @PostMapping
