@@ -10,17 +10,17 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("booksJSON")
-public class BookController {
+public class BooksController {
 
     private int counter = 3;
 
     private List<Map<String, String>> books = new ArrayList<>() {{
-        add(new HashMap<String, String>() {{
+        add(new HashMap<>() {{
             put("id", "1");
             put("name", "12 chairs");
             put("author", "Evgeny Petrov");
         }});
-        add(new HashMap<String, String>() {{
+        add(new HashMap<>() {{
             put("id", "2");
             put("name", "War and Peace");
             put("author", "Lev Tolstoy");
