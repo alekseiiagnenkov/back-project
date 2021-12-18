@@ -2,9 +2,10 @@ package ru.itfb.testproject.controllers;
 
 import org.springframework.web.bind.annotation.*;
 import ru.itfb.testproject.exceptions.NotFoundException;
+import ru.itfb.testproject.model.Book;
+import ru.itfb.testproject.service.BookService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,39 +13,35 @@ import java.util.Map;
 @RequestMapping("booksJSON")
 public class BooksController {
 
-    private int counter = 3;
+    private int counter = 1;
 
-    private List<Map<String, String>> books = new ArrayList<>() {{
-        add(new HashMap<>() {{
-            put("id", "1");
-            put("name", "12 chairs");
-            put("author", "Evgeny Petrov");
-        }});
-        add(new HashMap<>() {{
-            put("id", "2");
-            put("name", "War and Peace");
-            put("author", "Lev Tolstoy");
-        }});
-    }};
+    private BookService bookService;
+
+
+    public BooksController(BookService bookService) {
+        this.bookService = bookService;
+    }
 
     @GetMapping
     public List<Map<String, String>> books() {
+        List<Map<String,String>> books = new ArrayList<>();
+        bookService.readAll().forEach(book -> books.add(book.toMap()));
         return books;
     }
 
     @GetMapping("{id}")
     public Map<String, String> getOne(@PathVariable String id) {
-        return getBook(id);
+        return getBook(id).toMap();
     }
 
-    private Map<String, String> getBook(String id) {
-        return books.stream()
-                .filter(book -> book.get("id").equals(id))
+    private Book getBook(String id) {
+        return bookService.readAll().stream()
+                .filter(book -> book.getId().toString().equals(id))
                 .findFirst()
                 .orElseThrow(NotFoundException::new);
     }
 
-    @PostMapping
+/*    @PostMapping
     public Map<String, String> create(@RequestBody Map<String, String> book) {
         book.put("id", String.valueOf(counter++));
         books.add(book);
@@ -64,5 +61,5 @@ public class BooksController {
     public void delete(@PathVariable String id) {
         Map<String, String> book = getBook("id");
         books.remove(book);
-    }
+    }*/
 }
