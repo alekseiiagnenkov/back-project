@@ -30,3 +30,22 @@ CREATE TABLE persons
     username VARCHAR(100),
     password VARCHAR(100)
 );
+
+DROP TABLE persons;
+
+CREATE TABLE roles
+(
+    id       BIGINT NOT NULL,
+    role VARCHAR(20)
+);
+
+CREATE TABLE person_role
+(
+    id        BIGINT NOT NULL,
+    id_person BIGINT NOT NULL,
+    id_role   BIGINT NOT NULL
+);
+
+DROP TABLE person_role;
+
+GRANT SELECT ON persons, authors, books, author_book, roles, person_role TO PUBLIC;

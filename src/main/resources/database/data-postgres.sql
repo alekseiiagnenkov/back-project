@@ -12,5 +12,13 @@ VALUES (1, 1, 3),
        (2, 2, 1);
 
 INSERT INTO persons (id, username, password)
-VALUES (1, 'admin', 'admin1'),
-       (2, 'user', 'user1');
+VALUES (1, 'admin', 'admin'),
+       (2, 'user', 'user');
+
+INSERT INTO roles (id, role)
+VALUES (1, 'ADMIN'),
+       (2, 'USER');
+
+INSERT INTO person_role (id, id_person, id_role)
+VALUES (1, 1, 1),
+       (2, 2, 2);
