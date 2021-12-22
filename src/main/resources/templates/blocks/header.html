@@ -1,8 +1,8 @@
 <div th:fragment = "header">
     <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
         <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
-            <a class="me-3 py-2 text-dark text-decoration-none" href="authorsJSON">Authors</a>
-            <a class="me-3 py-2 text-dark text-decoration-none" href="booksJSON">Books</a>
+            <a class="me-3 py-2 text-dark text-decoration-none" href="authors">Authors</a>
+            <a class="me-3 py-2 text-dark text-decoration-none" href="books">Books</a>
             <a class="me-3 py-2 text-dark text-decoration-none" href="about">About</a>
             <div th:switch="${(#httpServletRequest.remoteUser)}" class="me-3 py-2 text-dark text-decoration-none">
                 <a th:case="null" href="login">Login</a>
