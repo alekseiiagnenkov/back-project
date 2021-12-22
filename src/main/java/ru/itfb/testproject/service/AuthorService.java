@@ -23,10 +23,6 @@ public class AuthorService {
         return authorRepository.findAll();
     }
 
-    public Author read(Long id) {
-        return authorRepository.getOne(id);
-    }
-
     public boolean update(Author author, Long id) {
         if (authorRepository.existsById(id)) {
             author.setId(id);

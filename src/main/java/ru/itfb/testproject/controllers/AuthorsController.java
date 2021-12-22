@@ -1,21 +1,18 @@
 package ru.itfb.testproject.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import ru.itfb.testproject.exceptions.NotFoundException;
+import ru.itfb.testproject.exceptions.BookNotFound;
 import ru.itfb.testproject.model.Author;
 import ru.itfb.testproject.service.AuthorService;
-import ru.itfb.testproject.service.BookService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("authorsJSON")
+@RequestMapping("authors")
 public class AuthorsController {
 
-    private int counter = 1;
     private AuthorService authorService;
 
     public AuthorsController(AuthorService authorService) {
@@ -26,12 +23,12 @@ public class AuthorsController {
         return authorService.readAll().stream()
                 .filter(author -> author.getId().toString().equals(id))
                 .findFirst()
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(BookNotFound::new);
     }
 
     @GetMapping
     public List<Map<String, String>> getAuthors() {
-        List<Map<String,String>> res = new ArrayList<>();
+        List<Map<String, String>> res = new ArrayList<>();
         authorService.readAll().forEach(author -> res.add(author.toMap()));
         return res;
     }
@@ -41,26 +38,21 @@ public class AuthorsController {
         return getAuthor(id).toMap();
     }
 
-/*    @PostMapping
-    public Map<String, String> create(@RequestBody Map<String, String> author) {
-        author.put("id", String.valueOf(counter++));
-        authors.add(author);
-        return author;
+    @PostMapping
+    public Map<String, String> create(@RequestBody Author author) {
+        authorService.create(author);
+        return author.toMap();
     }
 
     @PutMapping("{id}")
-    public Map<String, String> update(@PathVariable String id, @RequestBody Map<String, String> author) {
-        Map<String, String> authorFromDB = getAuthor(id);
-
-        authorFromDB.putAll(author);
-        authorFromDB.put("id", id);
-        return authorFromDB;
+    public Map<String, String> update(@PathVariable String id, @RequestBody Author author) {
+        authorService.update(author, Long.parseLong(id, 10));
+        return author.toMap();
     }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
-        Map<String, String> author = getAuthor("id");
-        authors.remove(author);
-    }*/
+        authorService.delete(Long.parseLong(id, 10));
+    }
 }
 

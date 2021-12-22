@@ -1,7 +1,7 @@
 package ru.itfb.testproject.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import ru.itfb.testproject.exceptions.NotFoundException;
+import ru.itfb.testproject.exceptions.BookNotFound;
 import ru.itfb.testproject.model.Book;
 import ru.itfb.testproject.service.BookService;
 
@@ -10,12 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("booksJSON")
+@RequestMapping("books")
 public class BooksController {
 
-    private int counter = 1;
-
-    private BookService bookService;
+    private final BookService bookService;
 
 
     public BooksController(BookService bookService) {
@@ -24,7 +22,7 @@ public class BooksController {
 
     @GetMapping
     public List<Map<String, String>> books() {
-        List<Map<String,String>> books = new ArrayList<>();
+        List<Map<String, String>> books = new ArrayList<>();
         bookService.readAll().forEach(book -> books.add(book.toMap()));
         return books;
     }
@@ -38,28 +36,23 @@ public class BooksController {
         return bookService.readAll().stream()
                 .filter(book -> book.getId().toString().equals(id))
                 .findFirst()
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(BookNotFound::new);
     }
 
-/*    @PostMapping
-    public Map<String, String> create(@RequestBody Map<String, String> book) {
-        book.put("id", String.valueOf(counter++));
-        books.add(book);
+    @PostMapping
+    public Book create(@RequestBody Book book) {
+        bookService.create(book);
         return book;
     }
 
     @PutMapping("{id}")
-    public Map<String, String> update(@PathVariable String id, @RequestBody Map<String, String> book) {
-        Map<String, String> bookFromDB = getBook(id);
-
-        bookFromDB.putAll(book);
-        bookFromDB.put("id", id);
-        return bookFromDB;
+    public Map<String, String> update(@PathVariable String id, @RequestBody Book book) {
+        bookService.update(book, Long.parseLong(id, 10));
+        return book.toMap();
     }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
-        Map<String, String> book = getBook("id");
-        books.remove(book);
-    }*/
+        bookService.delete(Long.parseLong(id, 10));
+    }
 }

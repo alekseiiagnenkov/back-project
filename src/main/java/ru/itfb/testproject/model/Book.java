@@ -14,13 +14,14 @@ import java.util.Map;
 public class Book {
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
     private String name;
 
-    public Map<String, String> toMap(){
+    public Map<String, String> toMap() {
         String strId = this.id.toString();
         String strName = this.name;
         return new HashMap<>() {{

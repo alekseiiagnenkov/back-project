@@ -23,10 +23,6 @@ public class PersonService {
         return personRepository.findAll();
     }
 
-    public Person read(Long id) {
-        return personRepository.getOne(id);
-    }
-
     public boolean update(Person person, Long id) {
         if (personRepository.existsById(id)) {
             person.setId(id);
