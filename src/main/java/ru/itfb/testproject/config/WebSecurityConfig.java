@@ -1,7 +1,9 @@
+/*
 package ru.itfb.testproject.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -34,32 +36,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/", "/booksJSON", "/booksJSON/{id}", "/authorsJSON", "/authorsJSON/{id}", "/about", "/login", "/logout").permitAll()
-                .anyRequest().authenticated()
+                    .antMatchers("/**", "/booksJSON", "/booksJSON/{id}", "/authorsJSON", "/authorsJSON/{id}", "/about", "/login", "/logout", "/users", "/users/**").permitAll()
+                    .antMatchers(HttpMethod.POST, "/**", "/books/**").permitAll()
+                    .antMatchers(HttpMethod.GET, "/**").permitAll()
+                    .antMatchers(HttpMethod.DELETE, "/**").permitAll()
+                    .antMatchers(HttpMethod.PUT, "/**").permitAll()
+                    .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                .loginPage("/login")
-                .permitAll()
+                    .formLogin()
+                    .loginPage("/login")
+                    .permitAll()
                 .and()
-                .logout()
-                .permitAll();
+                    .logout()
+                    .permitAll();
     }
 
     @Bean
     @Override
     public UserDetailsService userDetailsService() {
         List<UserDetails> participants = new ArrayList<>();
-
-/*        Long j = Long.valueOf(1);
-        for (int i = 0; i < personService.readAll().size(); i++, j++) {
-            UserDetails participant =
-                    User.withDefaultPasswordEncoder()
-                            .username(personService.readAll().get(i).getUsername())
-                            .password(personService.readAll().get(i).getPassword())
-                            .roles(roleService.read(personRoleService.getIdRoleByIdPerson(personService.read(j).getId())).toString())
-                            .build();
-            participants.add(participant);
-        }*/
 
         personService.readAll()
                 .forEach(participant -> participants.add(
@@ -69,23 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                 .roles(roleService.read(personRoleService.getIdRoleByIdPerson(participant.getId())).toString())
                                 .build()));
 
-        UserDetails r1 = participants.get(0);
-        UserDetails r2 = participants.get(1);
-/*        UserDetails admin =
-                User.withDefaultPasswordEncoder()
-                        .username("admin")
-                        .password("admin")
-                        .roles("ADMIN")
-                        .build();
-        UserDetails user =
-                User.withDefaultPasswordEncoder()
-                        .username("user")
-                        .password("user")
-                        .roles("USER")
-                        .build();
-
-        return new InMemoryUserDetailsManager(admin, user);*/
-
         return new InMemoryUserDetailsManager(participants);
     }
 }
+*/

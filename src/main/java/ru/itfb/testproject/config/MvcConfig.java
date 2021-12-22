@@ -1,3 +1,4 @@
+/*
 package ru.itfb.testproject.config;
 
 import org.springframework.context.annotation.Configuration;
@@ -13,3 +14,4 @@ public class MvcConfig implements WebMvcConfigurer {
     }
 
 }
+*/
