@@ -8,7 +8,7 @@ DROP TABLE authors;
 
 CREATE TABLE authors
 (
-    id       SERIAL,
+    id         SERIAL,
     first_name VARCHAR(100),
     last_name  VARCHAR(100)
 );
@@ -18,7 +18,7 @@ DROP TABLE books;
 
 CREATE TABLE books
 (
-    id       SERIAL,
+    id   SERIAL,
     name VARCHAR(255)
 );
 
@@ -27,9 +27,9 @@ DROP TABLE author_book;
 
 CREATE TABLE author_book
 (
-    id       SERIAL,
-    id_author BIGINT NOT NULL,
-    id_book   BIGINT NOT NULL
+    id        SERIAL,
+    id_author BIGINT,
+    id_book   BIGINT
 );
 
 
@@ -48,7 +48,7 @@ DROP TABLE roles;
 
 CREATE TABLE roles
 (
-    id       SERIAL,
+    id   SERIAL,
     role VARCHAR(20)
 );
 
@@ -57,7 +57,7 @@ DROP TABLE person_role;
 
 CREATE TABLE person_role
 (
-    id       SERIAL,
-    id_person BIGINT NOT NULL,
-    id_role   BIGINT NOT NULL
+    id        SERIAL,
+    id_person BIGINT,
+    id_role   BIGINT
 );

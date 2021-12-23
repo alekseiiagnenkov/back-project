@@ -1,9 +1,7 @@
 package ru.itfb.testproject.service;
 
 import org.springframework.stereotype.Service;
-import ru.itfb.testproject.model.Person;
 import ru.itfb.testproject.model.PersonRole;
-import ru.itfb.testproject.repositories.PersonRepository;
 import ru.itfb.testproject.repositories.PersonRoleRepository;
 
 import java.util.List;
@@ -25,9 +23,6 @@ public class PersonRoleService {
         return personRoleRepository.findAll();
     }
 
-    public PersonRole read(Long id) {
-        return personRoleRepository.getOne(id);
-    }
 
     public boolean update(PersonRole personRole, Long id) {
         if (personRoleRepository.existsById(id)) {
@@ -39,8 +34,15 @@ public class PersonRoleService {
         return false;
     }
 
-    public Long getIdRoleByIdPerson(Long id_person){
-        return personRoleRepository.getById(id_person).getId();
+    public Long getIdByIDPerson(Long id_person) {
+        PersonRole pr =  personRoleRepository.findAll().stream()
+                .filter(id_p -> id_p.getId_person().equals(id_person))
+                .findFirst().orElse(null);
+        return pr.getId();
+    }
+
+    public Long getIdRoleByIdPerson(Long id_person) {
+        return personRoleRepository.getById(getIdByIDPerson(id_person)).getId_role();
     }
 
     public boolean delete(Long id) {

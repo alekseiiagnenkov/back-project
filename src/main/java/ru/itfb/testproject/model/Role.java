@@ -22,7 +22,7 @@ public class Role {
     @Column(name = "role")
     private String role;
 
-    public Map<String, String> toMap(){
+    public Map<String, String> toMap() {
         String strId = this.id.toString();
         String strRole = this.role;
         return new HashMap<>() {{
@@ -33,5 +33,12 @@ public class Role {
 
     public String toString() {
         return role;
+    }
+
+    public boolean equals(Role role) {
+        if (this == role) {
+            return true;
+        }
+        return role.getRole().equals(this.getRole());
     }
 }

@@ -3,8 +3,6 @@ package ru.itfb.testproject.model;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Data
@@ -19,9 +17,9 @@ public class PersonRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "id_role")
-    private String id_role;
+    @Column
+    private Long id_person;
 
-    @Column(name = "id_person")
-    private String id_person;
+    @Column
+    private Long id_role;
 }
