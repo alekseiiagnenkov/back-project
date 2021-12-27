@@ -34,4 +34,10 @@ public class Author {
             put("second_name", strLastName);
         }};
     }
+
+    public boolean equals(Author author){
+        if(this == author)
+            return true;
+        return author.firstName.equals(this.firstName) && author.lastName.equals(this.lastName);
+    }
 }

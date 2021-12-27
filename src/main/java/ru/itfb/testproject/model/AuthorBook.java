@@ -1,10 +1,8 @@
 package ru.itfb.testproject.model;
 
 import lombok.*;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -18,9 +16,9 @@ public class AuthorBook {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "id_author", nullable = false)
-    private Long idAuthor;
+    @Column
+    private Long id_author;
 
-    @Column(name = "id_book", nullable = false)
-    private Long idBook;
+    @Column
+    private Long id_book;
 }

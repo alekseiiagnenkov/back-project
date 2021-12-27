@@ -3,7 +3,9 @@ package ru.itfb.testproject.controllers;
 import org.springframework.web.bind.annotation.*;
 import ru.itfb.testproject.exceptions.BookNotFound;
 import ru.itfb.testproject.model.Author;
+import ru.itfb.testproject.service.AuthorBookService;
 import ru.itfb.testproject.service.AuthorService;
+import ru.itfb.testproject.service.BookService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +15,9 @@ import java.util.Map;
 @RequestMapping("authors")
 public class AuthorsController {
 
-    private AuthorService authorService;
+    private final AuthorService authorService;
 
-    public AuthorsController(AuthorService authorService) {
+    public AuthorsController(BookService bookService, AuthorService authorService, AuthorBookService authorBookService) {
         this.authorService = authorService;
     }
 
@@ -50,7 +52,7 @@ public class AuthorsController {
         return author.toMap();
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("{id}") //TODO нужно ли удалять книги??
     public void delete(@PathVariable String id) {
         authorService.delete(Long.parseLong(id, 10));
     }
