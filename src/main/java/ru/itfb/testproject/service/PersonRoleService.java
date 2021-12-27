@@ -34,15 +34,14 @@ public class PersonRoleService {
         return false;
     }
 
-    public Long getIdByIDPerson(Long id_person) {
-        PersonRole pr =  personRoleRepository.findAll().stream()
+    public PersonRole getByIDPerson(Long id_person) {
+        return personRoleRepository.findAll().stream()
                 .filter(id_p -> id_p.getId_person().equals(id_person))
                 .findFirst().orElse(null);
-        return pr.getId();
     }
 
     public Long getIdRoleByIdPerson(Long id_person) {
-        return personRoleRepository.getById(getIdByIDPerson(id_person)).getId_role();
+        return getByIDPerson(id_person).getId_role();
     }
 
     public boolean delete(Long id) {

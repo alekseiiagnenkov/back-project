@@ -1,6 +1,7 @@
 package ru.itfb.testproject.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.itfb.testproject.model.Person;
 import ru.itfb.testproject.model.PersonRole;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("users")
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class PersonController {
 
     private final PersonService personService;
@@ -30,6 +32,7 @@ public class PersonController {
     }
 
     @GetMapping
+    //@PreAuthorize("hasAuthority('ADMIN')")
     public List<Map<String, String>> persons() {
         List<Map<String, String>> AllPersons = new ArrayList<>();
         personService.readAll().forEach(person -> {
@@ -52,6 +55,7 @@ public class PersonController {
     }
 
     @GetMapping("{id}")
+    //@PreAuthorize("hasAuthority('ADMIN')")
     public Map<String, String> getPerson(@PathVariable String id) {
         Map<String, String> personMap = getOne(id).toMap();
         personMap.put("role:", getRole(getOne(id)).toString());
@@ -98,15 +102,15 @@ public class PersonController {
     public Map<String, String> update(@PathVariable String id, @RequestBody PersonRoleDTO personRoleDTO) {
         personService.update(personRoleDTO.getPerson(), Long.parseLong(id, 10));
         Long newId = personRoleService.getIdRoleByIdPerson(Long.parseLong(id, 10));
-        if(!roleService.read(newId).getRole().equals(personRoleDTO.getRole().getRole())){
-            personRoleService.update(new PersonRole(1L,Long.parseLong(id,10),getRoleId(personRoleDTO.getRole())),personRoleService.getIdByIDPerson(Long.parseLong(id,10)));
+        if (!roleService.read(newId).getRole().equals(personRoleDTO.getRole().getRole())) {
+            personRoleService.update(new PersonRole(1L, Long.parseLong(id, 10), getRoleId(personRoleDTO.getRole())), personRoleService.getByIDPerson(Long.parseLong(id, 10)).getId());
         }
         return personRoleDTO.getPerson().toMap();
     }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
-        personRoleService.delete(personRoleService.getIdByIDPerson(Long.parseLong(id, 10)));
+        personRoleService.delete(personRoleService.getByIDPerson(Long.parseLong(id, 10)).getId());
         personService.delete(Long.parseLong(id, 10));
     }
 }
