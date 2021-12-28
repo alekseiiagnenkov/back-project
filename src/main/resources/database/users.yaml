@@ -1,9 +1,0 @@
----
-  "users":
-    -
-      - "admin"
-      - "admin"
-    -
-      - "user"
-      - "user"
-...
