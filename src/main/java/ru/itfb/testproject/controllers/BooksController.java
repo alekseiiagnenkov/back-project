@@ -35,48 +35,18 @@ public class BooksController {
 
     @GetMapping("{id}")
     public Map<String, String> getOne(@PathVariable String id) {
-        return getBook(id).toMap();
-    }
-
-    private Book getBook(String id) {
-        return bookService.readAll().stream()
-                .filter(book -> book.getId().toString().equals(id))
-                .findFirst()
-                .orElseThrow(BookNotFound::new);
-    }
-
-    private boolean hasBook(Book book) {
-        Book book1 = bookService.readAll().stream()
-                .filter(b -> b.getId().equals(book.getId()))
-                .findFirst().orElse(null);
-        return book1 != null;
-    }
-
-    private boolean hasAuthor(Author author) {
-        Author author1 = authorService.readAll().stream()
-                .filter(a -> a.equals(author))
-                .findFirst().orElse(null);
-        return author1 != null;
-    }
-
-    private Book getLastBook() {
-        return bookService.readAll().get(bookService.readAll().size() - 1);
-    }
-
-    private Long getAuthorId(Author author) {
-        Author it = authorService.readAll().stream()
-                .filter(a -> a.equals(author))
-                .findFirst().orElse(null);
-        return it != null ? it.getId() : authorService.readAll().size();
+        return bookService.getBook(id).toMap();
     }
 
     @PostMapping
     public Book create(@RequestBody AuthorBookDTO authorBookDTO) {
-        if (!hasBook(authorBookDTO.getBook())) {
+        if (!bookService.hasBook(authorBookDTO.getBook()) ) {
+            authorBookDTO.getBook().setId(-1L); //TODO или тут лучще проверять на то, свободно ли там?
+            authorBookDTO.getAuthor().setId(-1L);//TODO или тут лучще проверять на то, свободно ли там?
             bookService.create(authorBookDTO.getBook());
-            if (!hasAuthor(authorBookDTO.getAuthor()))
+            if (!authorService.hasAuthor(authorBookDTO.getAuthor()))
                 authorService.create(authorBookDTO.getAuthor());
-            AuthorBook ab = new AuthorBook(5L, getAuthorId(authorBookDTO.getAuthor()), getLastBook().getId());
+            AuthorBook ab = new AuthorBook(-1L, authorService.getAuthorId(authorBookDTO.getAuthor()), bookService.getLastBook().getId()); //TODO или тут лучще проверять на то, свободно ли там?
             authorBookService.create(ab);
         }
         return authorBookDTO.getBook();
@@ -90,7 +60,7 @@ public class BooksController {
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
-        authorBookService.delete(authorBookService.getIdByIDBook(Long.parseLong(id, 10)));
+        authorBookService.delete(authorBookService.getIdByIDBook(Long.parseLong(id, 10)).getId());
         bookService.delete(Long.parseLong(id, 10));
     }
 }

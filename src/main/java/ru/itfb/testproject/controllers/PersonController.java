@@ -32,7 +32,6 @@ public class PersonController {
     }
 
     @GetMapping
-    //@PreAuthorize("hasAuthority('ADMIN')")
     public List<Map<String, String>> persons() {
         List<Map<String, String>> AllPersons = new ArrayList<>();
         personService.readAll().forEach(person -> {
@@ -55,7 +54,6 @@ public class PersonController {
     }
 
     @GetMapping("{id}")
-    //@PreAuthorize("hasAuthority('ADMIN')")
     public Map<String, String> getPerson(@PathVariable String id) {
         Map<String, String> personMap = getOne(id).toMap();
         personMap.put("role:", getRole(getOne(id)).toString());

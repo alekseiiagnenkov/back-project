@@ -1,8 +1,8 @@
 package ru.itfb.testproject.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import ru.itfb.testproject.exceptions.BookNotFound;
 import ru.itfb.testproject.model.Author;
+import ru.itfb.testproject.model.AuthorBook;
 import ru.itfb.testproject.service.AuthorBookService;
 import ru.itfb.testproject.service.AuthorService;
 import ru.itfb.testproject.service.BookService;
@@ -15,17 +15,14 @@ import java.util.Map;
 @RequestMapping("authors")
 public class AuthorsController {
 
+    private final BookService bookService;
     private final AuthorService authorService;
+    private final AuthorBookService authorBookService;
 
     public AuthorsController(BookService bookService, AuthorService authorService, AuthorBookService authorBookService) {
+        this.bookService = bookService;
         this.authorService = authorService;
-    }
-
-    private Author getAuthor(String id) {
-        return authorService.readAll().stream()
-                .filter(author -> author.getId().toString().equals(id))
-                .findFirst()
-                .orElseThrow(BookNotFound::new);
+        this.authorBookService = authorBookService;
     }
 
     @GetMapping
@@ -37,23 +34,33 @@ public class AuthorsController {
 
     @GetMapping("{id}")
     public Map<String, String> getOne(@PathVariable String id) {
-        return getAuthor(id).toMap();
+        return authorService.getAuthor(id).toMap();
     }
 
     @PostMapping
     public Map<String, String> create(@RequestBody Author author) {
+        author.setId(-1L);
         authorService.create(author);
         return author.toMap();
     }
 
     @PutMapping("{id}")
     public Map<String, String> update(@PathVariable String id, @RequestBody Author author) {
-        authorService.update(author, Long.parseLong(id, 10));
+        if (authorService.hasAuthor(author))
+            if (authorService.getAuthorId(author) == Long.parseLong(id, 10))
+                authorService.update(author, Long.parseLong(id, 10));
         return author.toMap();
     }
 
-    @DeleteMapping("{id}") //TODO нужно ли удалять книги??
+    @DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
+        List<AuthorBook> ids_books = authorBookService.getIdsByIdAuthor(Long.parseLong(id, 10));
+
+        for (AuthorBook it : ids_books) {
+            bookService.delete(it.getId_book());
+            authorBookService.delete(it.getId());
+        }
+
         authorService.delete(Long.parseLong(id, 10));
     }
 }

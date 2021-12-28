@@ -1,6 +1,7 @@
 package ru.itfb.testproject.service;
 
 import org.springframework.stereotype.Service;
+import ru.itfb.testproject.exceptions.BookNotFound;
 import ru.itfb.testproject.model.Author;
 import ru.itfb.testproject.repositories.AuthorRepository;
 
@@ -40,4 +41,26 @@ public class AuthorService {
         }
         return false;
     }
+
+    public boolean hasAuthor(Author author) {
+        Author author1 = readAll().stream()
+                .filter(a -> a.equals(author))
+                .findFirst().orElse(null);
+        return author1 != null;
+    }
+
+    public Long getAuthorId(Author author) {
+        Author it = readAll().stream()
+                .filter(a -> a.equals(author))
+                .findFirst().orElse(null);
+        return it != null ? it.getId() : readAll().size();
+    }
+
+    public Author getAuthor(String id) {
+        return readAll().stream()
+                .filter(author -> author.getId().toString().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
 }

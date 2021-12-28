@@ -5,6 +5,8 @@ import ru.itfb.testproject.model.AuthorBook;
 import ru.itfb.testproject.repositories.AuthorBookRepository;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthorBookService {
@@ -41,10 +43,15 @@ public class AuthorBookService {
         return false;
     }
 
-    public Long getIdByIDBook(Long id_book) {
-        AuthorBook ab = authorBookRepository.findAll().stream()
+    public List<AuthorBook> getIdsByIdAuthor(Long id_author){
+        return authorBookRepository.findAll().stream()
+                .filter(ab -> Objects.equals(ab.getId_author(), id_author))
+                .collect(Collectors.toList());
+    }
+
+    public AuthorBook getIdByIDBook(Long id_book) {
+        return authorBookRepository.findAll().stream()
                 .filter(id_b -> id_b.getId_book().equals(id_book))
                 .findFirst().orElse(null);
-        return ab.getId();
     }
 }

@@ -1,6 +1,7 @@
 package ru.itfb.testproject.service;
 
 import org.springframework.stereotype.Service;
+import ru.itfb.testproject.exceptions.BookNotFound;
 import ru.itfb.testproject.model.Book;
 import ru.itfb.testproject.repositories.BookRepository;
 
@@ -23,10 +24,6 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    public Book read(Long id) {
-        return bookRepository.getOne(id);
-    }
-
     public boolean update(Book book, Long id) {
         if (bookRepository.existsById(id)) {
             book.setId(id);
@@ -45,5 +42,22 @@ public class BookService {
         return false;
     }
 
+    public boolean hasBook(Book book) {
+        Book book1 = readAll().stream()
+                .filter(b -> b.getName().equals(book.getName()))
+                .findFirst().orElse(null);
+        return book1 != null;
+    }
+
+    public Book getLastBook() {
+        return readAll().get(readAll().size() - 1);
+    }
+
+    public Book getBook(String id) {
+        return readAll().stream()
+                .filter(book -> book.getId().toString().equals(id))
+                .findFirst()
+                .orElseThrow(BookNotFound::new);
+    }
 
 }
