@@ -8,3 +8,8 @@ spring:
     driverClassName: org.postgresql.Driver
   jpa:
     database: POSTGRESQL
+  liquibase:
+    enabled: true
+    change-log: "classpath:/liquibase/db.changelog-master.xml"
+    user: "postgres"
+    password: "postgres"

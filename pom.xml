@@ -18,6 +18,13 @@
     </properties>
     <dependencies>
 
+        <!-- Liquibase -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.6.2</version>
+        </dependency>
+
         <!-- PosgreSQL -->
         <dependency>
             <groupId>org.postgresql</groupId>

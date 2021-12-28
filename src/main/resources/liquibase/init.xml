@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="a.iagnenkov@itfbgroup.ru" runOnChange="true">
+
+        <!-- Drop tables if exists -->
+        <sql splitStatements="true">
+            DROP TABLE "persons";
+            DROP TABLE "roles";
+            DROP TABLE "person_role";
+        </sql>
+
+        <!-- Create tables -->
+        <createTable tableName="persons">
+            <column name="id" type="SERIAL"/>
+            <column name="username" type="varchar(100)"/>
+            <column name="password" type="varchar(100)"/>
+        </createTable>
+
+        <createTable tableName="roles">
+            <column name="id" type="serial"/>
+            <column name="role" type="VARCHAR(20)"/>
+        </createTable>
+
+        <createTable tableName="person_role">
+            <column name="id" type="SERIAL"/>
+            <column name="id_person" type="BIGINT"/>
+            <column name="id_role" type="BIGINT"/>
+        </createTable>
+
+        <!-- Loading of Data -->
+        <loadData encoding="UTF-8" file="liquibase/data/role.csv" tableName="roles" separator=";">
+            <column name="id" type="serial"/>
+            <column name="role" type="VARCHAR(20)"/>
+        </loadData>
+
+        <insert tableName="person_role">
+            <column name="id_person" value="1"/>
+            <column name="id_role" value="1"/>
+        </insert>
+
+        <insert tableName="person_role">
+            <column name="id_person" value="2"/>
+            <column name="id_role" value="2"/>
+        </insert>
+
+        <loadData encoding="UTF-8" file="liquibase/data/persons.csv" tableName="persons" separator=";">
+            <column name="id" type="serial"/>
+            <column name="username" type="VARCHAR(100)"/>
+            <column name="password" type="VARCHAR(100)"/>
+        </loadData>
+
+
+    </changeSet>
+
+
+</databaseChangeLog>
