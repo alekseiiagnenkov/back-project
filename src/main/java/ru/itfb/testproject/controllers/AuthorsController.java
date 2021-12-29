@@ -26,10 +26,8 @@ public class AuthorsController {
     }
 
     @GetMapping
-    public List<Map<String, String>> getAuthors() {
-        List<Map<String, String>> res = new ArrayList<>();
-        authorService.readAll().forEach(author -> res.add(author.toMap()));
-        return res;
+    public List<Author> getAuthors() {
+        return new ArrayList<>(authorService.readAll());
     }
 
     @GetMapping("{id}")
