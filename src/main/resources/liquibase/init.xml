@@ -5,16 +5,21 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="1" author="a.iagnenkov@itfbgroup.ru" runOnChange="true">
+    <changeSet id="Load start info" author="a.iagnenkov@itfbgroup.ru" runOnChange="true">
 
         <!-- Drop tables if exists -->
         <sql splitStatements="true">
+            <!-- Users -->
             DROP TABLE "persons";
             DROP TABLE "roles";
             DROP TABLE "person_role";
+            <!-- Library -->
+            DROP TABLE "authors";
+            DROP TABLE "books";
+            DROP TABLE "author_book";
         </sql>
-
         <!-- Create tables -->
+                <!-- For users -->
         <createTable tableName="persons">
             <column name="id" type="SERIAL"/>
             <column name="username" type="varchar(100)"/>
@@ -22,7 +27,7 @@
         </createTable>
 
         <createTable tableName="roles">
-            <column name="id" type="serial"/>
+            <column name="id" type="SERIAL"/>
             <column name="role" type="VARCHAR(20)"/>
         </createTable>
 
@@ -32,8 +37,27 @@
             <column name="id_role" type="BIGINT"/>
         </createTable>
 
+                <!-- For library -->
+        <createTable tableName="authors">
+            <column name="id" type="SERIAL"/>
+            <column name="first_name" type="varchar(100)"/>
+            <column name="last_name" type="varchar(100)"/>
+        </createTable>
+
+        <createTable tableName="books">
+            <column name="id" type="SERIAL"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+
+        <createTable tableName="author_book">
+            <column name="id" type="SERIAL"/>
+            <column name="id_author" type="BIGINT"/>
+            <column name="id_book" type="BIGINT"/>
+        </createTable>
+
         <!-- Loading of Data -->
-        <loadData encoding="UTF-8" file="liquibase/data/role.csv" tableName="roles" separator=";">
+                <!-- For users -->
+        <loadData file="liquibase/data/role.csv" tableName="roles" separator=";">
             <column name="id" type="serial"/>
             <column name="role" type="VARCHAR(20)"/>
         </loadData>
@@ -48,12 +72,33 @@
             <column name="id_role" value="2"/>
         </insert>
 
-        <loadData encoding="UTF-8" file="liquibase/data/persons.csv" tableName="persons" separator=";">
-            <column name="id" type="serial"/>
+        <loadData file="liquibase/data/persons.csv" tableName="persons" separator=";">
+            <column name="id" type="SERIAL"/>
             <column name="username" type="VARCHAR(100)"/>
             <column name="password" type="VARCHAR(100)"/>
         </loadData>
 
+                <!-- For library -->
+        <loadData file="liquibase/data/authors.csv" tableName="authors" separator=";">
+            <column name="id" type="SERIAL"/>
+            <column name="first_name" type="varchar(100)"/>
+            <column name="last_name" type="varchar(100)"/>
+        </loadData>
+
+        <insert tableName="author_book">
+            <column name="id_author" value="1"/>
+            <column name="id_book" value="1"/>
+        </insert>
+
+        <insert tableName="author_book">
+            <column name="id_author" value="3"/>
+            <column name="id_book" value="2"/>
+        </insert>
+
+        <loadData file="liquibase/data/books.csv" tableName="books" separator=";">
+            <column name="id" type="serial"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </loadData>
 
     </changeSet>
 
