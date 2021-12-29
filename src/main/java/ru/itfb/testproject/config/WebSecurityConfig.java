@@ -42,10 +42,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers( "/books", "/books/{id}", "/authors", "/authors/{id}", "/about", "/login").permitAll()
-/*                .antMatchers(HttpMethod.POST, "/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/**").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/**").permitAll()
-                .antMatchers(HttpMethod.PUT, "/**").permitAll()*/
+                .antMatchers(HttpMethod.PUT, "/**").permitAll()
+
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
