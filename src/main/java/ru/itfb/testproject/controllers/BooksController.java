@@ -1,7 +1,12 @@
 package ru.itfb.testproject.controllers;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.query.Query;
 import org.springframework.web.bind.annotation.*;
-import ru.itfb.testproject.exceptions.BookNotFound;
 import ru.itfb.testproject.model.*;
 import ru.itfb.testproject.service.AuthorBookService;
 import ru.itfb.testproject.service.AuthorService;
@@ -40,7 +45,7 @@ public class BooksController {
 
     @PostMapping
     public Book create(@RequestBody AuthorBookDTO authorBookDTO) {
-        if (!bookService.hasBook(authorBookDTO.getBook()) ) {
+        if (!bookService.hasBook(authorBookDTO.getBook())) {
             authorBookDTO.getBook().setId(-1L); //TODO или тут лучще проверять на то, свободно ли там?
             authorBookDTO.getAuthor().setId(-1L);//TODO или тут лучще проверять на то, свободно ли там?
             bookService.create(authorBookDTO.getBook());
@@ -62,5 +67,23 @@ public class BooksController {
     public void delete(@PathVariable String id) {
         authorBookService.delete(authorBookService.getIdByIDBook(Long.parseLong(id, 10)).getId());
         bookService.delete(Long.parseLong(id, 10));
+    }
+
+    @GetMapping("/findbooks")
+    public List findbooks(@RequestParam(value = "sometext") String someText) {
+
+        StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+                .configure() // configures settings from hibernate.cfg.xml
+                .build();
+        SessionFactory sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        Query query = session.createQuery(
+                "SELECT b, a FROM Book AS b " +
+                        "LEFT JOIN AuthorBook AS ab ON b.id = ab.id_book " +
+                        "LEFT JOIN Author AS a ON a.id = ab.id_author " +
+                        "WHERE a.lastName LIKE '%"+someText+"%'");
+
+        return query.list();
     }
 }
