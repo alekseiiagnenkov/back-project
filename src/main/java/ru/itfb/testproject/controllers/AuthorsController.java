@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("authors")
 public class AuthorsController {
 
     private final BookService bookService;
@@ -25,24 +24,24 @@ public class AuthorsController {
         this.authorBookService = authorBookService;
     }
 
-    @GetMapping
+    //@GetMapping
     public List<Author> getAuthors() {
         return new ArrayList<>(authorService.readAll());
     }
 
-    @GetMapping("{id}")
-    public Map<String, String> getOne(@PathVariable String id) {
-        return authorService.getAuthor(id).toMap();
+    //@GetMapping("{id}")
+    public Author getOne(@PathVariable String id) {
+        return authorService.getAuthor(id);
     }
 
-    @PostMapping
+    //@PostMapping
     public Map<String, String> create(@RequestBody Author author) {
         author.setId(-1L);
         authorService.create(author);
         return author.toMap();
     }
 
-    @PutMapping("{id}")
+    //@PutMapping("{id}")
     public Map<String, String> update(@PathVariable String id, @RequestBody Author author) {
         if (authorService.hasAuthor(author))
             if (authorService.getAuthorId(author) == Long.parseLong(id, 10))
@@ -50,7 +49,7 @@ public class AuthorsController {
         return author.toMap();
     }
 
-    @DeleteMapping("{id}")
+    //@DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
         List<AuthorBook> ids_books = authorBookService.getIdsByIdAuthor(Long.parseLong(id, 10));
 

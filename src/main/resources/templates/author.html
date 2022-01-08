@@ -12,9 +12,15 @@
 
 <main class="flex-shrink-0">
     <div class="container">
-        <h2 class="mt-5" th:text="'Name: ' + ${author.getFirstName()} +' '+ ${author.getLastName()}"></h2>
+        <h2 class="mt-5" th:text="${author.getFirstName()} +' '+ ${author.getLastName()}"></h2>
         <p class="lead"></p>
     </div>
+
+    <form th:action="${author.getId()}" method="post">
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="submit" value="Delete">
+    </form>
+
 </main>
 
 </body>
