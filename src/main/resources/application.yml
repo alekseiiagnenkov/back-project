@@ -1,5 +1,6 @@
 server:
   port: 4001
+
 spring:
   datasource:
     url: "jdbc:postgresql://localhost:5432/postgres"
@@ -13,3 +14,20 @@ spring:
     change-log: "classpath:/liquibase/db.changelog-master.xml"
     user: "postgres"
     password: "postgres"
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
