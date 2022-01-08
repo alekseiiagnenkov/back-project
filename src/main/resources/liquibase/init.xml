@@ -10,13 +10,13 @@
         <!-- Drop tables if exists -->
         <sql splitStatements="true">
             <!-- Users -->
-            DROP TABLE "persons";
-            DROP TABLE "roles";
-            DROP TABLE "person_role";
+            DROP TABLE IF EXISTS "persons";
+            DROP TABLE IF EXISTS "roles";
+            DROP TABLE IF EXISTS "person_role";
             <!-- Library -->
-            DROP TABLE "authors";
-            DROP TABLE "books";
-            DROP TABLE "author_book";
+            DROP TABLE IF EXISTS "authors";
+            DROP TABLE IF EXISTS "books";
+            DROP TABLE IF EXISTS "author_book";
         </sql>
         <!-- Create tables -->
                 <!-- For users -->
