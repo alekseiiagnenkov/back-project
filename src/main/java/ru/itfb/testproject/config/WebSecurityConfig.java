@@ -3,7 +3,6 @@ package ru.itfb.testproject.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import ru.itfb.testproject.exceptions.RoleNotFound;
 import ru.itfb.testproject.service.PersonRoleService;
 import ru.itfb.testproject.service.PersonService;
 import ru.itfb.testproject.service.RoleService;
@@ -21,15 +21,25 @@ import ru.itfb.testproject.service.RoleService;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Spring Security
+ * Для авторизации пользователей
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    /**
+     * Для считывания пользователей из БД
+     */
     private final PersonService personService;
     private final PersonRoleService personRoleService;
     private final RoleService roleService;
 
+    /**
+     * Конструктор
+     */
     @Autowired
     WebSecurityConfig(PersonService personService, PersonRoleService personRoleService, RoleService roleService) {
         this.personService = personService;
@@ -37,15 +47,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.roleService = roleService;
     }
 
+    /**
+     * Функция, описывающая разрешенные страницы и страницу авторизации. Так же можно указать доступ к запросам
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
                 .antMatchers( "/books", "/books/{id}", "/authors", "/authors/{id}", "/about", "/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/**").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/**").permitAll()
-                .antMatchers(HttpMethod.PUT, "/**").permitAll()
 
                 .anyRequest().authenticated()
                 .and()
@@ -57,6 +66,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll();
     }
 
+    /**
+     * Загрузка пользователей из БД и сохранение их в программу
+     */
     @Bean
     @Override
     public UserDetailsService userDetailsService() {
@@ -64,13 +76,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         personService.readAll()
-                .forEach(participant -> participants.add(
-                                User.builder()
-                                        .username(participant.getUsername())
-                                        .password(encoder.encode(participant.getPassword()))
-                                        .roles(roleService.read(personRoleService.getIdRoleByIdPerson(participant.getId())).toString())
-                                        .build()
-                        )
+                .forEach(participant -> {
+                            try {
+                                participants.add(
+                                                User.builder()
+                                                        .username(participant.getUsername())
+                                                        .password(encoder.encode(participant.getPassword()))
+                                                        .roles(roleService.read(personRoleService.getIdRoleByIdPerson(participant.getId())).toString())
+                                                        .build()
+                                        );
+                            } catch (RoleNotFound e) {
+                                System.err.print(e);
+                            }
+                        }
                 );
 
         return new InMemoryUserDetailsManager(participants);

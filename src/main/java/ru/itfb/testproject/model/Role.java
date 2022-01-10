@@ -1,12 +1,13 @@
 package ru.itfb.testproject.model;
 
-import lombok.*;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
 
-
+/**
+ * Класс роли
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,19 +23,15 @@ public class Role {
     @Column(name = "role")
     private String role;
 
-    public Map<String, String> toMap() {
-        String strId = this.id.toString();
-        String strRole = this.role;
-        return new HashMap<>() {{
-            put("id", strId);
-            put("role", strRole);
-        }};
-    }
-
     public String toString() {
         return role;
     }
 
+    /**
+     * Сравнение ролей
+     * @param role другая роль
+     * @return true, если равны, иначе false
+     */
     public boolean equals(Role role) {
         if (this == role) {
             return true;

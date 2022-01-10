@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception если не найдена книга
+ * Exception если не найдена роль
  */
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class BookNotFound extends Exception {
+public class RoleNotFound extends Exception {
 }

@@ -4,6 +4,9 @@ import lombok.*;
 
 import javax.persistence.*;
 
+/**
+ * Класс связь между автором и книгой
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -7,23 +7,31 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
 import org.springframework.web.bind.annotation.*;
-import ru.itfb.testproject.model.*;
+import ru.itfb.testproject.exceptions.BookNotFound;
+import ru.itfb.testproject.model.Author;
+import ru.itfb.testproject.model.AuthorBook;
+import ru.itfb.testproject.model.AuthorBookDTO;
+import ru.itfb.testproject.model.Book;
 import ru.itfb.testproject.service.AuthorBookService;
 import ru.itfb.testproject.service.AuthorService;
 import ru.itfb.testproject.service.BookService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+
+/**
+ * Контроллер для {@link Book}
+ * По сути тут был готовый backend(если я правильно все понял),
+ * но после было сказано сделать @Сontroller для визуализации,
+ * по этому все аннотации перекочевали в {@link ru.itfb.testproject.controllers.view.ViewBook}
+ */
 @RestController
-@RequestMapping("books")
 public class BooksController {
 
     private final BookService bookService;
     private final AuthorService authorService;
     private final AuthorBookService authorBookService;
-
 
     public BooksController(BookService bookService, AuthorService authorService, AuthorBookService authorBookService) {
         this.bookService = bookService;
@@ -31,44 +39,87 @@ public class BooksController {
         this.authorBookService = authorBookService;
     }
 
-    @GetMapping
-    public List<Map<String, String>> books() {
-        List<Map<String, String>> books = new ArrayList<>();
-        bookService.readAll().forEach(book -> books.add(book.toMap()));
-        return books;
+    /**
+     * GET запрос всех книг
+     * @return массив всех книг
+     */
+    //@GetMapping
+    public List<Book> getBooks() {
+        return new ArrayList<>(bookService.readAll());
     }
 
-    @GetMapping("{id}")
-    public Map<String, String> getOne(@PathVariable String id) {
-        return bookService.getBook(id).toMap();
+    /**
+     * GET запрос для одной книги
+     * @param id уникальный идентификатор книги
+     * @return книгу
+     */
+    //@GetMapping("{id}")
+    public Book getOne(@PathVariable String id) throws BookNotFound {
+        return bookService.getBook(id);
     }
 
-    @PostMapping
+    /**
+     * POST запрос для создания книги
+     * (Обязательно с книгой нужно указывать автора)
+     *
+     * Если автор уже есть, то она к нему прикрепится.
+     * Если нет, то создается новый автор и книга
+     * @param authorBookDTO автор+книга
+     * @return автор+книга
+     */
+    //@PostMapping("books")
     public Book create(@RequestBody AuthorBookDTO authorBookDTO) {
         if (!bookService.hasBook(authorBookDTO.getBook())) {
-            authorBookDTO.getBook().setId(-1L); //TODO или тут лучще проверять на то, свободно ли там?
-            authorBookDTO.getAuthor().setId(-1L);//TODO или тут лучще проверять на то, свободно ли там?
-            bookService.create(authorBookDTO.getBook());
+            authorBookDTO.getBook().setId(-1L); //TODO или тут нужно проверять на то, свободно ли там?
+            authorBookDTO.getAuthor().setId(-1L);//TODO или тут нужно проверять на то, свободно ли там?
+            bookService.save(authorBookDTO.getBook());
             if (!authorService.hasAuthor(authorBookDTO.getAuthor()))
-                authorService.create(authorBookDTO.getAuthor());
-            AuthorBook ab = new AuthorBook(-1L, authorService.getAuthorId(authorBookDTO.getAuthor()), bookService.getLastBook().getId()); //TODO или тут лучще проверять на то, свободно ли там?
-            authorBookService.create(ab);
+                authorService.save(authorBookDTO.getAuthor());
+            AuthorBook ab = new AuthorBook(-1L, authorService.getAuthorId(authorBookDTO.getAuthor()), bookService.getLastBook().getId()); //TODO или тут нужно проверять на то, свободно ли там?
+            authorBookService.save(ab);
         }
         return authorBookDTO.getBook();
     }
 
-    @PutMapping("{id}") // TODO что тут апдейтить
-    public Map<String, String> update(@PathVariable String id, @RequestBody Book book) {
+    /**
+     * PUT запрос для обновления
+     * Изменяет книгу только если она есть
+     * @param id уникальный идентификатор книги
+     * @param book новые данные
+     * @return измененную книгу
+     */
+    //@PutMapping("books/{id}")
+    public Book update(@PathVariable String id, @RequestBody Book book) {
         bookService.update(book, Long.parseLong(id, 10));
-        return book.toMap();
+        return book;
     }
 
-    @DeleteMapping("{id}")
+    /**
+     * Получает автора по id книги
+     * @param id уникальный идентификатор книги
+     * @return автора, которому принадлежит эта книга
+     */
+    public Author getAuthor(Long id){
+        return authorService.getAuthor(authorBookService.getByIdBook(id).getId_author().toString());
+    }
+
+    /**
+     * DELETE запрос
+     * Удаляет книгу и связь между ней и автором
+     * @param id уникальный идентификатор книги
+     */
+    //@DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
-        authorBookService.delete(authorBookService.getIdByIDBook(Long.parseLong(id, 10)).getId());
+        authorBookService.delete(authorBookService.getByIdBook(Long.parseLong(id, 10)).getId());
         bookService.delete(Long.parseLong(id, 10));
     }
 
+    /**
+     * GET запрос
+     * Поиск всех книг по части фамилии автора
+     * @param someText часть фамилии автора
+     * @return все книги, у которых в фамилии автора есть someText
+     */
     @GetMapping("/findbooks")
     public List findbooks(@RequestParam(value = "sometext") String someText) {
 

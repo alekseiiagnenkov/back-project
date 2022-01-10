@@ -8,13 +8,18 @@
 
 <body class="d-flex flex-column h-100">
 
-<header th:insert="blocks/header :: header"></header>
-
 <main class="flex-shrink-0">
     <div class="container">
-        <h2 class="mt-5" th:text="'Name: ' + ${book.getName()}"></h2>
-        <h2 class="mt-5" th:text="'Author: ' + ${book.getAuthor()}"></h2>
+        <h2 class="mt-5" th:text="'Book:'+${book.getName()}"></h2>
+        <h2 class="mt-5" th:text="'Author:'+ ${author.getFirstName()} +' '+ ${author.getLastName()}"></h2>
         <p class="lead"></p>
+    </div>
+
+    <div th:if="${(#httpServletRequest.isUserInRole('ADMIN'))}" class="me-3 py-2 text-dark text-decoration-none">
+            <form th:action="${book.getId()}" method="post">
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="submit" value="Delete">
+            </form>
     </div>
 </main>
 

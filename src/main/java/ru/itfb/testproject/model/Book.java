@@ -1,11 +1,14 @@
 package ru.itfb.testproject.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
 
+/**
+ * Класс книги
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,13 +23,4 @@ public class Book {
 
     @Column
     private String name;
-
-    public Map<String, String> toMap() {
-        String strId = this.id.toString();
-        String strName = this.name;
-        return new HashMap<>() {{
-            put("id", strId);
-            put("name", strName);
-        }};
-    }
 }

@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Класс для передачи одновременно автора и книги
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

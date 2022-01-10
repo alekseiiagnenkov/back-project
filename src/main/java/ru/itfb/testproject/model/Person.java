@@ -6,7 +6,9 @@ import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * Класс пользователя
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,6 +27,10 @@ public class Person {
     @Column
     private String password;
 
+    /**
+     * Для преобразования в map, так как иногда нужно было добавлять сюда еще и role
+     * @return map со всеми полями
+     */
     public Map<String, String> toMap(){
         String strId = this.id.toString();
         String strFirstName = this.username;

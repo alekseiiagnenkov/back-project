@@ -4,7 +4,9 @@ import lombok.*;
 
 import javax.persistence.*;
 
-
+/**
+ * Класс связи пользователя и его роли
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

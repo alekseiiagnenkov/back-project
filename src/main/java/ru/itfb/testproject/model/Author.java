@@ -6,6 +6,9 @@ import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Класс автора книги
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,17 +27,11 @@ public class Author {
     @Column(name = "last_name")
     private String lastName;
 
-    public Map<String, String> toMap(){
-        String strId = this.id.toString();
-        String strFirstName = this.firstName;
-        String strLastName = this.lastName;
-        return new HashMap<>() {{
-            put("id", strId);
-            put("first_name", strFirstName);
-            put("second_name", strLastName);
-        }};
-    }
-
+    /**
+     * Реализация сравнения
+     * @param author другой автор
+     * @return true, если совпадает имя и фамилия, иначе false
+     */
     public boolean equals(Author author){
         if(this == author)
             return true;

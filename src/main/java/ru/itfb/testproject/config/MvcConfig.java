@@ -12,6 +12,4 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addViewController("/logout").setViewName("logout");
     }
 
-
-
 }

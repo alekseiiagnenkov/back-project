@@ -9,8 +9,13 @@ import ru.itfb.testproject.service.BookService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * Контроллер для {@link Author}
+ * По сути тут был готовый backend(если я правильно все понял),
+ * но после было сказано сделать @Сontroller для визуализации,
+ * по этому все аннотации перекочевали в {@link ru.itfb.testproject.controllers.view.ViewAuthor}
+ */
 @RestController
 public class AuthorsController {
 
@@ -24,40 +29,64 @@ public class AuthorsController {
         this.authorBookService = authorBookService;
     }
 
+    /**
+     * GET запрос всех авторов
+     * @return массив всех авторов
+     */
     //@GetMapping
     public List<Author> getAuthors() {
         return new ArrayList<>(authorService.readAll());
     }
 
+    /**
+     * GET запрос для одного автора
+     * @param id уникальный идентификатор автора
+     * @return автора
+     */
     //@GetMapping("{id}")
     public Author getOne(@PathVariable String id) {
         return authorService.getAuthor(id);
     }
 
-    //@PostMapping
-    public Map<String, String> create(@RequestBody Author author) {
+    /**
+     * POST запрос для создания автора
+     * @param author новый автор
+     * @return нового автора
+     */
+    //@PostMapping("authors")
+    public Author create(@RequestBody Author author) {
         author.setId(-1L);
-        authorService.create(author);
-        return author.toMap();
+        authorService.save(author);
+        return author;
     }
 
-    //@PutMapping("{id}")
-    public Map<String, String> update(@PathVariable String id, @RequestBody Author author) {
+    /**
+     * PUT запрос для обновления
+     * Изменяет автора только если он есть
+     * @param id уникальный идентификатор автора
+     * @param author новые данные
+     * @return измененного автора
+     */
+    //@PutMapping("authors/{id}")
+    public Author update(@PathVariable String id, @RequestBody Author author) {
         if (authorService.hasAuthor(author))
             if (authorService.getAuthorId(author) == Long.parseLong(id, 10))
                 authorService.update(author, Long.parseLong(id, 10));
-        return author.toMap();
+        return author;
     }
 
+    /**
+     * DELETE запрос
+     * Удаляет автора и все его книги из БД
+     * @param id уникальный идентификатор автора
+     */
     //@DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
-        List<AuthorBook> ids_books = authorBookService.getIdsByIdAuthor(Long.parseLong(id, 10));
-
+        List<AuthorBook> ids_books = authorBookService.getByIdAuthor(Long.parseLong(id, 10));
         for (AuthorBook it : ids_books) {
             bookService.delete(it.getId_book());
             authorBookService.delete(it.getId());
         }
-
         authorService.delete(Long.parseLong(id, 10));
     }
 }
