@@ -1,5 +1,6 @@
 package ru.itfb.testproject.controllers.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.nio.file.Paths;
  * Создан для визуализации работы приложения с классом {@link Author}
  * Не реализована визуализация для: создания и обновления
  */
+@Slf4j
 @Controller
 @RequestMapping("authors")
 public class ViewAuthor {
@@ -31,6 +33,7 @@ public class ViewAuthor {
      */
     @RequestMapping (method = RequestMethod.GET)
     public String getAuthors(Model model) {
+        log.info("Using getAuthors");
         model.addAttribute("authors", authorsController.getAuthors());
         return "authors";
     }
@@ -44,6 +47,7 @@ public class ViewAuthor {
     @RequestMapping (value = "{id}", method = RequestMethod.GET)
     public String getOne(@PathVariable String id, Model model) {
         Author author = authorsController.getOne(id);
+        log.info("Using getOne for "+author);
         model.addAttribute("author", author);
         model.addAttribute("model", model);
         model.addAttribute("view", this);
@@ -57,6 +61,7 @@ public class ViewAuthor {
      */
     @RequestMapping ( method = RequestMethod.POST)
     public Author create(@RequestBody Author author) {
+        log.info("Using create for "+author);
         authorsController.create(author);
         return author;
     }
@@ -69,6 +74,7 @@ public class ViewAuthor {
      */
     @RequestMapping (value = "{id}", method = RequestMethod.PUT)
     public Author update(@PathVariable String id, @RequestBody Author author) {
+        log.info("Using update for id = "+id+" to "+author);
         authorsController.update(id, author);
         return author;
     }
@@ -82,6 +88,7 @@ public class ViewAuthor {
      */
     @RequestMapping (value = "{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable String id, HttpServletRequest request) {
+        log.info("Using delete author for id = " + id);
         authorsController.delete(id);
         Path link = Paths.get(request.getHeader("Referer")).getParent();
         return "redirect:"+ link;

@@ -1,5 +1,6 @@
 package ru.itfb.testproject.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.Map;
  * <p>
  * --------ДОСТУПЕН ТОЛЬКО для пользователя admin--------
  */
+@Slf4j
 @RestController
 @RequestMapping("users")
 @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -42,6 +44,7 @@ public class PersonController {
      */
     @GetMapping
     public List<Map<String, String>> getPersons() {
+        log.info("Using getPersons");
         List<Map<String, String>> AllPersons = new ArrayList<>();
         personService.readAll().forEach(person -> {
             Map<String, String> personMap = person.toMap();
@@ -63,6 +66,7 @@ public class PersonController {
      * @throws RoleNotFound ошибка, если не нашли такого пользователя
      */
     public Role getRole(Person person) throws RoleNotFound {
+        log.info("Using getRole for" + person);
         if(person == null)
             return null;
         return roleService.read(personRoleService.getIdRoleByIdPerson(person.getId()));
@@ -75,6 +79,7 @@ public class PersonController {
      * @return пользователя или ничего, если пользователя с таким id нет
      */
     public Person getOne(String id) {
+        log.info("Using getOne for id = " + id);
         return personService.readAll().stream()
                 .filter(person -> person.getId() == Long.parseLong(id, 10))
                 .findFirst()
@@ -90,6 +95,7 @@ public class PersonController {
      */
     @GetMapping("{id}")
     public PersonRoleDTO getPerson(@PathVariable String id) {
+        log.info("Using getPerson for id = " + id);
         try {
             return new PersonRoleDTO(getOne(id), getRole(getOne(id)));
         } catch (RoleNotFound e) {
@@ -154,6 +160,7 @@ public class PersonController {
      */
     @PostMapping
     public Map<String, String> create(@RequestBody PersonRoleDTO personRoleDTO) {
+        log.info("Using create for " + personRoleDTO);
         if (!hasPerson(personRoleDTO.getPerson())) {
             personService.save(personRoleDTO.getPerson());
             if (hasRole(personRoleDTO.getRole()) == null)
@@ -174,6 +181,7 @@ public class PersonController {
      */
     @PutMapping("{id}")
     public Map<String, String> update(@PathVariable String id, @RequestBody PersonRoleDTO personRoleDTO) {
+        log.info("Using update for id = " + id +" to " + personRoleDTO);
         personService.update(personRoleDTO.getPerson(), Long.parseLong(id, 10));
         Long newId = personRoleService.getIdRoleByIdPerson(Long.parseLong(id, 10));
         try {
@@ -193,6 +201,7 @@ public class PersonController {
      */
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
+        log.info("Using delete for id = " + id);
         personRoleService.delete(personRoleService.getByIdPerson(Long.parseLong(id, 10)).getId());
         personService.delete(Long.parseLong(id, 10));
     }

@@ -1,5 +1,6 @@
 package ru.itfb.testproject.controllers.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import java.nio.file.Paths;
  * Создан для визуализации работы приложения с классом {@link Book}
  * Не реализована визуализация для: создания и обновления
  */
+@Slf4j
 @Controller
 @RequestMapping("books")
 public class ViewBook {
@@ -35,7 +37,8 @@ public class ViewBook {
      * @return файл отображения books.html
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String getAuthors(Model model) {
+    public String getBooks(Model model) {
+        log.info("Using getBooks");
         model.addAttribute("books", booksController.getBooks());
         return "books";
     }
@@ -53,6 +56,7 @@ public class ViewBook {
         try {
             Book book = booksController.getOne(id);
             Author author = booksController.getAuthor(book.getId());
+            log.info("Using getOne for " + book);
             model.addAttribute("author", author);
             model.addAttribute("book", book);
             model.addAttribute("model", model);
@@ -72,6 +76,7 @@ public class ViewBook {
      */
     @RequestMapping(method = RequestMethod.POST)
     public AuthorBookDTO create(@RequestBody AuthorBookDTO authorBookDTO) {
+        log.info("Using create for "+ authorBookDTO);
         booksController.create(authorBookDTO);
         return authorBookDTO;
     }
@@ -84,6 +89,7 @@ public class ViewBook {
      */
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public Book update(@PathVariable String id, @RequestBody Book book) {
+        log.info("Using update for id = "+id+" to "+book);
         booksController.update(id, book);
         return book;
     }
@@ -97,6 +103,7 @@ public class ViewBook {
      */
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable String id, HttpServletRequest request) {
+        log.info("Using delete book for id = " + id);
         booksController.delete(id);
         Path link = Paths.get(request.getHeader("Referer")).getParent();
         return "redirect:" + link;

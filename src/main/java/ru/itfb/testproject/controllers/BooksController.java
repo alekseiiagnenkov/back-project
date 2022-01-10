@@ -1,5 +1,6 @@
 package ru.itfb.testproject.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
@@ -26,6 +27,7 @@ import java.util.List;
  * но после было сказано сделать @Сontroller для визуализации,
  * по этому все аннотации перекочевали в {@link ru.itfb.testproject.controllers.view.ViewBook}
  */
+@Slf4j
 @RestController
 public class BooksController {
 
@@ -122,7 +124,7 @@ public class BooksController {
      */
     @GetMapping("/findbooks")
     public List findbooks(@RequestParam(value = "sometext") String someText) {
-
+        log.info("Using findbooks with sometext = "+someText);
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .configure() // configures settings from hibernate.cfg.xml
                 .build();
