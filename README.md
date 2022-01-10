@@ -27,12 +27,12 @@
 Стартовая инициализация базы данных через Liquibase: надо добавить двух пользователей (admin/admin, user/user), добавить трех авторов (Ильф, Петров, Толстой), добавить две книги с указанием их авторов: "12 Стульев" и "Война и Мир"
 
 # Стек технологий
-Spring Boot 2.5
-Spring Security
-Spring Data
-LomBok
-Liquibase 
-PostgreSQL
+1. Spring Boot 2.5
+2. Spring Security
+3. Spring Data
+4. LomBok
+5. Liquibase 
+6. PostgreSQL
 Фронт без каких-либо JS библиотек.
 
 Дополнительные фишки
