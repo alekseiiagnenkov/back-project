@@ -1,5 +1,4 @@
 # testProject
-First project using Spring
 
 Сделать простое веб-приложение на Spring Boot, для управления книгами в библиотеке, в качестве демонстрации основных концепций Java и Spring Boot.
 
