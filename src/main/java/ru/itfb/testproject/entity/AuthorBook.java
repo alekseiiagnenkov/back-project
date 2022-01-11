@@ -1,18 +1,19 @@
-package ru.itfb.testproject.model;
+package ru.itfb.testproject.entity;
 
 import lombok.*;
 
 import javax.persistence.*;
 
 /**
- * Класс связи пользователя и его роли
+ * Класс связь между автором и книгой
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "person_role")
-public class PersonRole {
+@Table(name = "author_book")
+public class AuthorBook {
 
     @Id
     @Column(name = "id")
@@ -20,8 +21,8 @@ public class PersonRole {
     private Long id;
 
     @Column
-    private Long id_person;
+    private Long id_author;
 
     @Column
-    private Long id_role;
+    private Long id_book;
 }

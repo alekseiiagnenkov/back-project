@@ -1,15 +1,14 @@
-package ru.itfb.testproject.model;
+package ru.itfb.testproject.entity;
 
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Класс автора книги
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

@@ -1,4 +1,4 @@
-package ru.itfb.testproject.model;
+package ru.itfb.testproject.entity;
 
 import lombok.*;
 
@@ -9,7 +9,8 @@ import java.util.Map;
 /**
  * Класс пользователя
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
