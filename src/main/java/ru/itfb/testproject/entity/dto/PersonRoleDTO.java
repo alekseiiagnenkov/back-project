@@ -1,13 +1,14 @@
-package ru.itfb.testproject.model;
+package ru.itfb.testproject.entity.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import ru.itfb.testproject.entity.Person;
+import ru.itfb.testproject.entity.Role;
 
 /**
  * Класс для одновременной передачи пользователя и роли
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PersonRoleDTO {

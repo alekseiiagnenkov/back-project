@@ -1,13 +1,14 @@
-package ru.itfb.testproject.model;
+package ru.itfb.testproject.entity.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import ru.itfb.testproject.entity.Author;
+import ru.itfb.testproject.entity.Book;
 
 /**
  * Класс для передачи одновременно автора и книги
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthorBookDTO {
