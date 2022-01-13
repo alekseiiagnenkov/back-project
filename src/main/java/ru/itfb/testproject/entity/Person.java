@@ -1,9 +1,13 @@
 package ru.itfb.testproject.entity;
 
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,7 +19,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Entity
 @Table(name = "persons")
-public class Person {
+public class Person implements UserDetails {
 
     @Id
     @Column(name = "id")
@@ -41,5 +45,30 @@ public class Person {
             put("username", strFirstName);
             put("password", strLastName);
         }};
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(() -> "read");
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
