@@ -2,10 +2,12 @@ package ru.itfb.testproject.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.itfb.testproject.entity.Person;
+import ru.itfb.testproject.entity.PersonRole;
+import ru.itfb.testproject.entity.Role;
+import ru.itfb.testproject.entity.dto.PersonRoleDTO;
 import ru.itfb.testproject.exceptions.RoleNotFound;
-import ru.itfb.testproject.model.*;
 import ru.itfb.testproject.service.PersonRoleService;
 import ru.itfb.testproject.service.PersonService;
 import ru.itfb.testproject.service.RoleService;
@@ -23,7 +25,6 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("users")
-@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class PersonController {
 
     private final PersonService personService;
@@ -44,7 +45,6 @@ public class PersonController {
      */
     @GetMapping
     public List<Map<String, String>> getPersons() {
-        log.info("Using getPersons");
         List<Map<String, String>> AllPersons = new ArrayList<>();
         personService.readAll().forEach(person -> {
             Map<String, String> personMap = person.toMap();
@@ -66,8 +66,7 @@ public class PersonController {
      * @throws RoleNotFound ошибка, если не нашли такого пользователя
      */
     public Role getRole(Person person) throws RoleNotFound {
-        log.info("Using getRole for" + person);
-        if(person == null)
+        if (person == null)
             return null;
         return roleService.read(personRoleService.getIdRoleByIdPerson(person.getId()));
     }
@@ -79,7 +78,6 @@ public class PersonController {
      * @return пользователя или ничего, если пользователя с таким id нет
      */
     public Person getOne(String id) {
-        log.info("Using getOne for id = " + id);
         return personService.readAll().stream()
                 .filter(person -> person.getId() == Long.parseLong(id, 10))
                 .findFirst()
@@ -95,12 +93,12 @@ public class PersonController {
      */
     @GetMapping("{id}")
     public PersonRoleDTO getPerson(@PathVariable String id) {
-        log.info("Using getPerson for id = " + id);
         try {
-            return new PersonRoleDTO(getOne(id), getRole(getOne(id)));
+            Person person = getOne(id);
+            return new PersonRoleDTO(person.getUsername(), person.getPassword(), getRole(getOne(id)).getRole());
         } catch (RoleNotFound e) {
             System.err.print(e);
-            return new PersonRoleDTO(null, null);
+            return new PersonRoleDTO("", "", "");
         }
     }
 
@@ -108,6 +106,7 @@ public class PersonController {
      * Получить последнего добавленного пользователя
      * Нужно чтобы при создании связи между Ролью и
      * Пользователем узнать реальный id пользователя
+     *
      * @return пользователя
      */
     private Person getLastPerson() {
@@ -116,6 +115,7 @@ public class PersonController {
 
     /**
      * Получить id переданной роли
+     *
      * @param role переданная роль
      * @return id role
      */
@@ -128,6 +128,7 @@ public class PersonController {
 
     /**
      * Проверка на наличие переданной роли
+     *
      * @param role переданная роль
      * @return если есть, то передает ее, иначе null
      */
@@ -139,6 +140,7 @@ public class PersonController {
 
     /**
      * Проверка на наличие переанного пользователя
+     *
      * @param person переданный пользователь
      * @return если есть, то передает его, иначе null
      */
@@ -152,56 +154,61 @@ public class PersonController {
     /**
      * POST запрос для создания пользователя
      * (Обязательно указывать роль)
-     *
+     * <p>
      * Если роль уже есть, то она к нему прикрепится.
      * Если нет, то создается новая роль и пользователь
+     *
      * @param personRoleDTO пользователь+роль
      * @return пользователь+роль
      */
     @PostMapping
-    public Map<String, String> create(@RequestBody PersonRoleDTO personRoleDTO) {
-        log.info("Using create for " + personRoleDTO);
-        if (!hasPerson(personRoleDTO.getPerson())) {
-            personService.save(personRoleDTO.getPerson());
-            if (hasRole(personRoleDTO.getRole()) == null)
-                roleService.save(personRoleDTO.getRole());
-            PersonRole p = new PersonRole(5L, getLastPerson().getId(), getRoleId(personRoleDTO.getRole()));
+    public Person create(@RequestBody PersonRoleDTO personRoleDTO) {
+        Person person = new Person(-1L, personRoleDTO.getUsername(), personRoleDTO.getPassword());
+        Role role = new Role(-1L, personRoleDTO.getRole());
+        if (!hasPerson(person)) {
+            personService.save(person);
+            if (hasRole(role) == null)
+                roleService.save(role);
+            PersonRole p = new PersonRole(5L, getLastPerson().getId(), getRoleId(role));
             personRoleService.save(p);
+            return getLastPerson();
         }
-        return personRoleDTO.getPerson().toMap();//TODO что возвращать?
+        return null;
     }
 
     /**
      * Обновление пользователя по id
      * Проверяет, есть ли вообще у нас такой пользователь
-     * @param id уникальный идентификатор пользователя
+     *
+     * @param id            уникальный идентификатор пользователя
      * @param personRoleDTO пользователь+роль
      * @return пользователь+роль
-     * @exception RoleNotFound если не найдена роль (такого вроде н может быть)
+     * @throws RoleNotFound если не найдена роль (такого вроде н может быть)
      */
     @PutMapping("{id}")
-    public Map<String, String> update(@PathVariable String id, @RequestBody PersonRoleDTO personRoleDTO) {
-        log.info("Using update for id = " + id +" to " + personRoleDTO);
-        personService.update(personRoleDTO.getPerson(), Long.parseLong(id, 10));
+    public Person update(@PathVariable String id, @RequestBody PersonRoleDTO personRoleDTO) {
+        Person person = new Person(-1L, personRoleDTO.getUsername(), personRoleDTO.getPassword());
+        Role role = new Role(-1L, personRoleDTO.getRole());
+        personService.update(person, Long.parseLong(id, 10));
         Long newId = personRoleService.getIdRoleByIdPerson(Long.parseLong(id, 10));
         try {
-            if (!roleService.read(newId).getRole().equals(personRoleDTO.getRole().getRole())) {
-                personRoleService.update(new PersonRole(1L, Long.parseLong(id, 10), getRoleId(personRoleDTO.getRole())), personRoleService.getByIdPerson(Long.parseLong(id, 10)).getId());
+            if (!roleService.read(newId).getRole().equals(role.getRole())) {
+                personRoleService.update(new PersonRole(1L, Long.parseLong(id, 10), getRoleId(role)), personRoleService.getByIdPerson(Long.parseLong(id, 10)).getId());
             }
         } catch (RoleNotFound e) {
             System.err.print(e);
         }
-        return personRoleDTO.getPerson().toMap();
+        return personService.getOne(id);
     }
 
     /**
      * DELETE запрос
      * Удаляет пользователя и связь между ним и ролью
+     *
      * @param id уникальный идентификатор пользователя
      */
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
-        log.info("Using delete for id = " + id);
         personRoleService.delete(personRoleService.getByIdPerson(Long.parseLong(id, 10)).getId());
         personService.delete(Long.parseLong(id, 10));
     }

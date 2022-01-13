@@ -1,8 +1,6 @@
 package ru.itfb.testproject.entity.dto;
 
 import lombok.*;
-import ru.itfb.testproject.entity.Author;
-import ru.itfb.testproject.entity.Book;
 
 /**
  * Класс для передачи одновременно автора и книги
@@ -13,8 +11,12 @@ import ru.itfb.testproject.entity.Book;
 @AllArgsConstructor
 public class AuthorBookDTO {
 
-    private Author author;
+    //Person
+    private String personFirstName;
 
-    private Book book;
+    private String personLastName;
+
+    //Book
+    private String bookName;
 
 }

@@ -1,8 +1,6 @@
 package ru.itfb.testproject.entity.dto;
 
 import lombok.*;
-import ru.itfb.testproject.entity.Person;
-import ru.itfb.testproject.entity.Role;
 
 /**
  * Класс для одновременной передачи пользователя и роли
@@ -13,8 +11,12 @@ import ru.itfb.testproject.entity.Role;
 @AllArgsConstructor
 public class PersonRoleDTO {
 
-    private Person person;
+    //Person
+    private String username;
 
-    private Role role;
+    private String password;
+
+    //Role
+    private String role;
 
 }

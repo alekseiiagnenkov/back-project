@@ -9,10 +9,10 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
 import org.springframework.web.bind.annotation.*;
 import ru.itfb.testproject.exceptions.BookNotFound;
-import ru.itfb.testproject.model.Author;
-import ru.itfb.testproject.model.AuthorBook;
-import ru.itfb.testproject.model.AuthorBookDTO;
-import ru.itfb.testproject.model.Book;
+import ru.itfb.testproject.entity.Author;
+import ru.itfb.testproject.entity.AuthorBook;
+import ru.itfb.testproject.entity.dto.AuthorBookDTO;
+import ru.itfb.testproject.entity.Book;
 import ru.itfb.testproject.service.AuthorBookService;
 import ru.itfb.testproject.service.AuthorService;
 import ru.itfb.testproject.service.BookService;
@@ -43,6 +43,7 @@ public class BooksController {
 
     /**
      * GET запрос всех книг
+     *
      * @return массив всех книг
      */
     //@GetMapping
@@ -52,6 +53,7 @@ public class BooksController {
 
     /**
      * GET запрос для одной книги
+     *
      * @param id уникальный идентификатор книги
      * @return книгу
      */
@@ -63,51 +65,61 @@ public class BooksController {
     /**
      * POST запрос для создания книги
      * (Обязательно с книгой нужно указывать автора)
-     *
+     * <p>
      * Если автор уже есть, то она к нему прикрепится.
      * Если нет, то создается новый автор и книга
+     *
      * @param authorBookDTO автор+книга
      * @return автор+книга
      */
     //@PostMapping("books")
     public Book create(@RequestBody AuthorBookDTO authorBookDTO) {
-        if (!bookService.hasBook(authorBookDTO.getBook())) {
-            authorBookDTO.getBook().setId(-1L); //TODO или тут нужно проверять на то, свободно ли там?
-            authorBookDTO.getAuthor().setId(-1L);//TODO или тут нужно проверять на то, свободно ли там?
-            bookService.save(authorBookDTO.getBook());
-            if (!authorService.hasAuthor(authorBookDTO.getAuthor()))
-                authorService.save(authorBookDTO.getAuthor());
-            AuthorBook ab = new AuthorBook(-1L, authorService.getAuthorId(authorBookDTO.getAuthor()), bookService.getLastBook().getId()); //TODO или тут нужно проверять на то, свободно ли там?
+        Book book = new Book(-1L, authorBookDTO.getBookName());
+        Author author = new Author(-1L, authorBookDTO.getPersonFirstName(), authorBookDTO.getPersonLastName());
+        if (!bookService.hasBook(book)) {
+            bookService.save(book);
+            if (!authorService.hasAuthor(author))
+                authorService.save(author);
+            AuthorBook ab = new AuthorBook(-1L, authorService.getAuthorId(author), bookService.getLastBook().getId()); //TODO или тут нужно проверять на то, свободно ли там?
             authorBookService.save(ab);
+            return bookService.getLastBook();
         }
-        return authorBookDTO.getBook();
+        return null;
     }
 
     /**
      * PUT запрос для обновления
      * Изменяет книгу только если она есть
-     * @param id уникальный идентификатор книги
+     *
+     * @param id   уникальный идентификатор книги
      * @param book новые данные
      * @return измененную книгу
      */
     //@PutMapping("books/{id}")
     public Book update(@PathVariable String id, @RequestBody Book book) {
         bookService.update(book, Long.parseLong(id, 10));
-        return book;
+        try {
+            return getOne(id);
+        } catch(BookNotFound e){
+            System.err.print(e);
+            return null;
+        }
     }
 
     /**
      * Получает автора по id книги
+     *
      * @param id уникальный идентификатор книги
      * @return автора, которому принадлежит эта книга
      */
-    public Author getAuthor(Long id){
+    public Author getAuthor(Long id) {
         return authorService.getAuthor(authorBookService.getByIdBook(id).getId_author().toString());
     }
 
     /**
      * DELETE запрос
      * Удаляет книгу и связь между ней и автором
+     *
      * @param id уникальный идентификатор книги
      */
     //@DeleteMapping("{id}")
@@ -119,12 +131,13 @@ public class BooksController {
     /**
      * GET запрос
      * Поиск всех книг по части фамилии автора
+     *
      * @param someText часть фамилии автора
      * @return все книги, у которых в фамилии автора есть someText
      */
     @GetMapping("/findbooks")
     public List findbooks(@RequestParam(value = "sometext") String someText) {
-        log.info("Using findbooks with sometext = "+someText);
+        log.info("Using findbooks with sometext = " + someText);
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .configure() // configures settings from hibernate.cfg.xml
                 .build();
@@ -135,7 +148,7 @@ public class BooksController {
                 "SELECT b, a FROM Book AS b " +
                         "LEFT JOIN AuthorBook AS ab ON b.id = ab.id_book " +
                         "LEFT JOIN Author AS a ON a.id = ab.id_author " +
-                        "WHERE a.lastName LIKE '%"+someText+"%'");
+                        "WHERE a.lastName LIKE '%" + someText + "%'");
 
         return query.list();
     }
