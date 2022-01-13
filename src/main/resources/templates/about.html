@@ -12,16 +12,17 @@
 <h2 th:inline="text" class="me-3 py-2 text-dark text-decoration-none">
 
     <div th:if="${(#httpServletRequest.remoteUser)} != null">
-        <a>User: [[${(#httpServletRequest.remoteUser)}]]</a>
+        <h1 class="fw-light">User: [[${(#httpServletRequest.remoteUser)}]]</h1>
         <div th:switch="${(#httpServletRequest.isUserInRole('ADMIN'))}">
-            <a>Role: </a>
-            <a th:case="true">ADMIN</a>
-            <a th:case="false">USER</a>
+            <h1 class="fw-light">Role:
+            <a th:case="true" >ADMIN</a>
+            <a th:case="false" >USER</a>
+            </h1>
         </div>
     </div>
 
     <div th:if="${(#httpServletRequest.remoteUser)} == null">
-        <a href="login">Not authorization !!!</a>
+        <a class="fw-light" href="login">Not authorization !!!</a>
     </div>
 
 </h2>

@@ -9,6 +9,8 @@
 
 <header th:insert="blocks/header :: header"></header>
 
+<h1 class="fw-light">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Sign Out"/>
 </form>
