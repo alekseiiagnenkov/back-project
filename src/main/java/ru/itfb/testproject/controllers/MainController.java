@@ -13,13 +13,11 @@ public class MainController {
 
     @GetMapping("/about")
     public String about() {
-        log.info("Open about");
         return "about";
     }
 
     @GetMapping("/")
     public String main() {
-        log.info("Open main");
         return "main";
     }
 
