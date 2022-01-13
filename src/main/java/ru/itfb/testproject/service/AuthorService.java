@@ -1,7 +1,7 @@
 package ru.itfb.testproject.service;
 
 import org.springframework.stereotype.Service;
-import ru.itfb.testproject.model.Author;
+import ru.itfb.testproject.entity.Author;
 import ru.itfb.testproject.repositories.AuthorRepository;
 
 import java.util.List;

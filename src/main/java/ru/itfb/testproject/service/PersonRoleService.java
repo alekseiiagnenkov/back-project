@@ -1,7 +1,7 @@
 package ru.itfb.testproject.service;
 
 import org.springframework.stereotype.Service;
-import ru.itfb.testproject.model.PersonRole;
+import ru.itfb.testproject.entity.PersonRole;
 import ru.itfb.testproject.repositories.PersonRoleRepository;
 
 import java.util.List;

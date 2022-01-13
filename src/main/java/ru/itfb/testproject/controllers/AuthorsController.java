@@ -1,8 +1,8 @@
 package ru.itfb.testproject.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import ru.itfb.testproject.model.Author;
-import ru.itfb.testproject.model.AuthorBook;
+import ru.itfb.testproject.entity.Author;
+import ru.itfb.testproject.entity.AuthorBook;
 import ru.itfb.testproject.service.AuthorBookService;
 import ru.itfb.testproject.service.AuthorService;
 import ru.itfb.testproject.service.BookService;

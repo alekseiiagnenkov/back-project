@@ -47,6 +47,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.roleService = roleService;
     }
 
+
+/*    @Autowired
+    private DataSource dataSource;
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.jdbcAuthentication().dataSource(dataSource);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }*/
+
     /**
      * Функция, описывающая разрешенные страницы и страницу авторизации. Так же можно указать доступ к запросам
      */
@@ -54,16 +68,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers( "/books", "/books/{id}", "/authors", "/authors/{id}", "/about", "/login").permitAll()
+                .antMatchers("/books", "/books/{id}", "/authors", "/authors/{id}", "/about", "/login").permitAll()
+                .antMatchers("/users/**").hasRole("ADMIN")
 
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                .loginPage("/login")
-                .permitAll()
+                .formLogin().loginPage("/login").permitAll()
                 .and()
-                .logout()
-                .permitAll();
+                .logout().permitAll();
     }
 
     /**
@@ -79,12 +91,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .forEach(participant -> {
                             try {
                                 participants.add(
-                                                User.builder()
-                                                        .username(participant.getUsername())
-                                                        .password(encoder.encode(participant.getPassword()))
-                                                        .roles(roleService.read(personRoleService.getIdRoleByIdPerson(participant.getId())).toString())
-                                                        .build()
-                                        );
+                                        User.builder()
+                                                .username(participant.getUsername())
+                                                .password(encoder.encode(participant.getPassword()))
+                                                .roles(roleService.read(personRoleService.getIdRoleByIdPerson(participant.getId())).toString())
+                                                .build()
+                                );
                             } catch (RoleNotFound e) {
                                 System.err.print(e);
                             }
@@ -93,4 +105,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         return new InMemoryUserDetailsManager(participants);
     }
+
+    /**
+     * Загрузка пользователей в программу
+     */
+/*    public UserDetailsService userDetailsServiceBean(Person person) {
+
+        try {
+            return new InMemoryUserDetailsManager(
+                    User.builder()
+                            .username(person.getUsername())
+                            .password(person.getPassword())
+                            .roles(roleService.read(personRoleService.getIdRoleByIdPerson(person.getId())).toString())
+                            .build());
+        } catch (RoleNotFound e) {
+            System.err.print(e);
+            return null;
+        }
+    }*/
 }

@@ -13,12 +13,12 @@
         <property name="connection.username">postgres</property>
         <property name="connection.password">postgres</property>
         <!-- NOTE that after automapping with IDEA property username and password will delete -->
-        <mapping class="ru.itfb.testproject.model.Author"/>
-        <mapping class="ru.itfb.testproject.model.Book"/>
-        <mapping class="ru.itfb.testproject.model.AuthorBook"/>
-        <mapping class="ru.itfb.testproject.model.Person"/>
-        <mapping class="ru.itfb.testproject.model.PersonRole"/>
-        <mapping class="ru.itfb.testproject.model.Role"/>
+        <mapping class="ru.itfb.testproject.entity.Author"/>
+        <mapping class="ru.itfb.testproject.entity.Book"/>
+        <mapping class="ru.itfb.testproject.entity.AuthorBook"/>
+        <mapping class="ru.itfb.testproject.entity.Person"/>
+        <mapping class="ru.itfb.testproject.entity.PersonRole"/>
+        <mapping class="ru.itfb.testproject.entity.Role"/>
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hbm2ddl.auto">update</property> -->
     </session-factory>

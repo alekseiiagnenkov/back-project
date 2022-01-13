@@ -2,7 +2,7 @@ package ru.itfb.testproject.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.itfb.testproject.model.Book;
+import ru.itfb.testproject.entity.Book;
 
 /**
  * Репозиторий для {@link Book}

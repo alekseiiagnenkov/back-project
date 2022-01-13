@@ -2,7 +2,7 @@ package ru.itfb.testproject.service;
 
 import org.springframework.stereotype.Service;
 import ru.itfb.testproject.exceptions.BookNotFound;
-import ru.itfb.testproject.model.Book;
+import ru.itfb.testproject.entity.Book;
 import ru.itfb.testproject.repositories.BookRepository;
 
 import java.util.List;
