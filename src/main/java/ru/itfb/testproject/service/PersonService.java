@@ -1,7 +1,7 @@
 package ru.itfb.testproject.service;
 
 import org.springframework.stereotype.Service;
-import ru.itfb.testproject.model.Person;
+import ru.itfb.testproject.entity.Person;
 import ru.itfb.testproject.repositories.PersonRepository;
 
 import java.util.List;
@@ -33,6 +33,19 @@ public class PersonService {
      */
     public List<Person> readAll() {
         return personRepository.findAll();
+    }
+
+    /**
+     * Считывание пользователя из БД по id
+     * @param id уникальный идентификатор пользователя
+     * @return пользователя
+     */
+    public Person getOne(String id){
+        return personRepository.findAll()
+                .stream()
+                .filter(person -> person.getId()==Long.parseLong(id, 10))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
