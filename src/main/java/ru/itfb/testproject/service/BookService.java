@@ -1,8 +1,10 @@
 package ru.itfb.testproject.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.itfb.testproject.exceptions.BookNotFound;
 import ru.itfb.testproject.entity.Book;
+import ru.itfb.testproject.exceptions.ErrorResponse;
 import ru.itfb.testproject.repositories.BookRepository;
 
 import java.util.List;
@@ -22,6 +24,7 @@ public class BookService {
 
     /**
      * Сохранение книги в таблицу
+     *
      * @param book книга, которого нужно сохранить
      */
     public void save(Book book) {
@@ -30,16 +33,18 @@ public class BookService {
 
     /**
      * Считывание всех книг из БД
+     *
      * @return лист книг
      */
-    public List<Book> readAll(){
+    public List<Book> readAll() {
         return bookRepository.findAll();
     }
 
     /**
      * Обновление книги
+     *
      * @param book новые данные книги
-     * @param id уникальный идентификатор, по которому будут заменены данные
+     * @param id   уникальный идентификатор, по которому будут заменены данные
      * @return true, если обновилось, false если не нашел такого
      */
     public boolean update(Book book, Long id) {
@@ -54,6 +59,7 @@ public class BookService {
 
     /**
      * Удаление книги из БД
+     *
      * @param id уникальный идентификатор книги
      * @return true, если удалилось, false если не нашел такого
      */
@@ -67,6 +73,7 @@ public class BookService {
 
     /**
      * Проверяет наличие книги в таблице
+     *
      * @param book книга, которую хотим там найти
      * @return найденную книгу или null
      */
@@ -81,6 +88,7 @@ public class BookService {
      * Получить последнюю добавленную книгу
      * Нужно для создания связи между книгой и
      * автором(чтобы узнать реальный id только что добавленной книги)
+     *
      * @return последнюю добавленную книгу
      */
     public Book getLastBook() {
@@ -89,14 +97,17 @@ public class BookService {
 
     /**
      * Получить книгу по id
+     *
      * @param id интересующий нас id
      * @return книга или null, если не найдена
      */
     public Book getBook(String id) throws BookNotFound {
-        return readAll().stream()
-                .filter(book -> book.getId().toString().equals(id))
-                .findFirst()
-                .orElseThrow(BookNotFound::new);
+        Book book = readAll().stream()
+                .filter(b -> b.getId().toString().equals(id))
+                .findFirst().orElse(null);
+        if (book == null)
+            throw new BookNotFound("Book [" + id + "] not found");
+        return book;
     }
 
 }

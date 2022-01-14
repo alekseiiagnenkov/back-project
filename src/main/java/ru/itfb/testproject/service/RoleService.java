@@ -1,6 +1,8 @@
 package ru.itfb.testproject.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ru.itfb.testproject.exceptions.ErrorResponse;
 import ru.itfb.testproject.exceptions.RoleNotFound;
 import ru.itfb.testproject.entity.Role;
 import ru.itfb.testproject.repositories.RoleRepository;
@@ -36,8 +38,15 @@ public class RoleService {
      * Считывание всех ролей из БД
      * @return лист ролей
      */
-    public Role read(Long id) throws RoleNotFound {
-        return roleRepository.findById(id).orElseThrow(RoleNotFound::new);
+    public Role read(Long id)  {
+        try {
+            return roleRepository.findById(id).orElseThrow(RoleNotFound::new);
+        } catch (RoleNotFound e){
+            throw new ErrorResponse(
+                    HttpStatus.NOT_FOUND,
+                    "Role ["+ id +"] not found"
+            );
+        }
     }
 
     /**

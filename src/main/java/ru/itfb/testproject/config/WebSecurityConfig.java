@@ -89,17 +89,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         personService.readAll()
                 .forEach(participant -> {
-                            try {
-                                participants.add(
-                                        User.builder()
-                                                .username(participant.getUsername())
-                                                .password(encoder.encode(participant.getPassword()))
-                                                .roles(roleService.read(personRoleService.getIdRoleByIdPerson(participant.getId())).toString())
-                                                .build()
-                                );
-                            } catch (RoleNotFound e) {
-                                System.err.print(e);
-                            }
+                            participants.add(
+                                    User.builder()
+                                            .username(participant.getUsername())
+                                            .password(encoder.encode(participant.getPassword()))
+                                            .roles(roleService.read(personRoleService.getIdRoleByIdPerson(participant.getId())).toString())
+                                            .build()
+                            );
                         }
                 );
 
