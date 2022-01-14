@@ -1,34 +1,34 @@
 package ru.itfb.testproject.controllers;
 
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.itfb.testproject.exceptions.BookNotFound;
 import ru.itfb.testproject.entity.Author;
 import ru.itfb.testproject.entity.AuthorBook;
 import ru.itfb.testproject.entity.dto.AuthorBookDTO;
 import ru.itfb.testproject.entity.Book;
+import ru.itfb.testproject.exceptions.BookNotFound;
 import ru.itfb.testproject.service.AuthorBookService;
 import ru.itfb.testproject.service.AuthorService;
 import ru.itfb.testproject.service.BookService;
 
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequest;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 
 /**
  * Контроллер для {@link Book}
- * По сути тут был готовый backend(если я правильно все понял),
- * но после было сказано сделать @Сontroller для визуализации,
- * по этому все аннотации перекочевали в {@link ru.itfb.testproject.controllers.view.ViewBook}
  */
-@Slf4j
-@RestController
+@Controller
+@RequestMapping("books")
 public class BooksController {
 
     private final BookService bookService;
@@ -42,24 +42,35 @@ public class BooksController {
     }
 
     /**
-     * GET запрос всех книг
+     * Визуализация GET запроса для всех книг
      *
-     * @return массив всех книг
+     * @param model для передачи параметров в html страницу для их отображения
+     * @return файл отображения books.html
      */
-    //@GetMapping
-    public List<Book> getBooks() {
-        return new ArrayList<>(bookService.readAll());
+    @RequestMapping(method = RequestMethod.GET)
+    public String getBooks(Model model) {
+        model.addAttribute("books", bookService.readAll());
+        return "books";
     }
 
     /**
-     * GET запрос для одной книги
+     * Визуализация GET запроса для определенной книги
+     * Отображает так же автора книги
+     * если книга не найдена, то возвращаемся на страницу со всеми книгами
      *
-     * @param id уникальный идентификатор книги
-     * @return книгу
+     * @param id    уникальный идентификатор нашей книги
+     * @param model для передачи параметров в html страницу для их отображения
+     * @return файл отображения book.html
      */
-    //@GetMapping("{id}")
-    public Book getOne(@PathVariable String id) throws BookNotFound {
-        return bookService.getBook(id);
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public String getOne(@PathVariable String id, Model model, HttpServletRequest request) throws BookNotFound {
+            Book book = bookService.getBook(id);
+            Author author = authorService.getAuthor(book.getId().toString());
+            model.addAttribute("author", author);
+            model.addAttribute("book", book);
+            model.addAttribute("model", model);
+            model.addAttribute("view", this);
+            return "book";
     }
 
     /**
@@ -72,7 +83,7 @@ public class BooksController {
      * @param authorBookDTO автор+книга
      * @return автор+книга
      */
-    //@PostMapping("books")
+    @RequestMapping(method = RequestMethod.POST)
     public Book create(@RequestBody AuthorBookDTO authorBookDTO) {
         Book book = new Book(-1L, authorBookDTO.getBookName());
         Author author = new Author(-1L, authorBookDTO.getPersonFirstName(), authorBookDTO.getPersonLastName());
@@ -95,15 +106,10 @@ public class BooksController {
      * @param book новые данные
      * @return измененную книгу
      */
-    //@PutMapping("books/{id}")
-    public Book update(@PathVariable String id, @RequestBody Book book) {
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    public Book update(@PathVariable String id, @RequestBody Book book) throws BookNotFound {
         bookService.update(book, Long.parseLong(id, 10));
-        try {
-            return getOne(id);
-        } catch(BookNotFound e){
-            System.err.print(e);
-            return null;
-        }
+        return bookService.getBook(id);
     }
 
     /**
@@ -119,13 +125,20 @@ public class BooksController {
     /**
      * DELETE запрос
      * Удаляет книгу и связь между ней и автором
+     * <p>
+     * После удаления переносит в /authors
      *
-     * @param id уникальный идентификатор книги
+     * @param id      уникальный идентификатор книги, которую будем удалять
+     * @param request необходим для возврата на предыдущие страницы после удаления книги
+     * @return переход на страницу со всеми книгами
      */
-    //@DeleteMapping("{id}")
-    public void delete(@PathVariable String id) {
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    public String delete(@PathVariable String id, HttpServletRequest request) {
         authorBookService.delete(authorBookService.getByIdBook(Long.parseLong(id, 10)).getId());
         bookService.delete(Long.parseLong(id, 10));
+
+        Path link = Paths.get(request.getHeader("Referer")).getParent();
+        return "redirect:" + link;
     }
 
     /**
@@ -137,7 +150,6 @@ public class BooksController {
      */
     @GetMapping("/findbooks")
     public List findbooks(@RequestParam(value = "sometext") String someText) {
-        log.info("Using findbooks with sometext = " + someText);
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .configure() // configures settings from hibernate.cfg.xml
                 .build();

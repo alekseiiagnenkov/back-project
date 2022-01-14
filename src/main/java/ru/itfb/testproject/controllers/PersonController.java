@@ -1,6 +1,5 @@
 package ru.itfb.testproject.controllers;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.itfb.testproject.entity.Person;
@@ -22,7 +21,6 @@ import java.util.Map;
  * <p>
  * --------ДОСТУПЕН ТОЛЬКО для пользователя admin--------
  */
-@Slf4j
 @RestController
 @RequestMapping("users")
 public class PersonController {
@@ -191,12 +189,8 @@ public class PersonController {
         Role role = new Role(-1L, personRoleDTO.getRole());
         personService.update(person, Long.parseLong(id, 10));
         Long newId = personRoleService.getIdRoleByIdPerson(Long.parseLong(id, 10));
-        try {
-            if (!roleService.read(newId).getRole().equals(role.getRole())) {
-                personRoleService.update(new PersonRole(1L, Long.parseLong(id, 10), getRoleId(role)), personRoleService.getByIdPerson(Long.parseLong(id, 10)).getId());
-            }
-        } catch (RoleNotFound e) {
-            System.err.print(e);
+        if (!roleService.read(newId).getRole().equals(role.getRole())) {
+            personRoleService.update(new PersonRole(1L, Long.parseLong(id, 10), getRoleId(role)), personRoleService.getByIdPerson(Long.parseLong(id, 10)).getId());
         }
         return personService.getOne(id);
     }
