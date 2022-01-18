@@ -15,6 +15,8 @@ import ru.itfb.testproject.service.PersonService;
 import ru.itfb.testproject.service.RoleService;
 import ru.itfb.testproject.service.UserDetailsServiceImpl;
 
+import javax.sql.DataSource;
+
 /**
  * Spring Security
  * Для авторизации пользователей
@@ -50,7 +52,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * Передаем в конфигурацию собственные UserDetails и PasswordEncoder
      * @param auth куда передаем конфигурацию
-     * @throws Exception
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

@@ -14,6 +14,8 @@ import ru.itfb.testproject.entity.AuthorBook;
 import ru.itfb.testproject.entity.dto.AuthorBookDTO;
 import ru.itfb.testproject.entity.Book;
 import ru.itfb.testproject.exceptions.BookNotFound;
+import ru.itfb.testproject.mappers.AuthorMapper;
+import ru.itfb.testproject.mappers.BookMapper;
 import ru.itfb.testproject.service.AuthorBookService;
 import ru.itfb.testproject.service.AuthorService;
 import ru.itfb.testproject.service.BookService;
@@ -64,13 +66,13 @@ public class BooksController {
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public String getOne(@PathVariable String id, Model model, HttpServletRequest request) throws BookNotFound {
-            Book book = bookService.getBook(id);
-            Author author = authorService.getAuthor(book.getId().toString());
-            model.addAttribute("author", author);
-            model.addAttribute("book", book);
-            model.addAttribute("model", model);
-            model.addAttribute("view", this);
-            return "book";
+        Book book = bookService.getBook(id);
+        Author author = authorService.getAuthor(book.getId().toString());
+        model.addAttribute("author", author);
+        model.addAttribute("book", book);
+        model.addAttribute("model", model);
+        model.addAttribute("view", this);
+        return "book";
     }
 
     /**
@@ -85,13 +87,16 @@ public class BooksController {
      */
     @RequestMapping(method = RequestMethod.POST)
     public Book create(@RequestBody AuthorBookDTO authorBookDTO) {
-        Book book = new Book(-1L, authorBookDTO.getBookName());
-        Author author = new Author(-1L, authorBookDTO.getPersonFirstName(), authorBookDTO.getPersonLastName());
+        Book book = BookMapper.dtoToEntity(authorBookDTO);
+        Author author = AuthorMapper.dtoToEntity(authorBookDTO);
         if (!bookService.hasBook(book)) {
             bookService.save(book);
             if (!authorService.hasAuthor(author))
                 authorService.save(author);
-            AuthorBook ab = new AuthorBook(-1L, authorService.getAuthorId(author), bookService.getLastBook().getId()); //TODO или тут нужно проверять на то, свободно ли там?
+            AuthorBook ab = new AuthorBook()
+                    .setId(-1L)
+                    .setIdAuthor(authorService.getAuthorId(author))
+                    .setIdBook(bookService.getLastBook().getId()); //TODO или тут нужно проверять на то, свободно ли там?
             authorBookService.save(ab);
             return bookService.getLastBook();
         }
@@ -119,7 +124,7 @@ public class BooksController {
      * @return автора, которому принадлежит эта книга
      */
     public Author getAuthor(Long id) {
-        return authorService.getAuthor(authorBookService.getByIdBook(id).getId_author().toString());
+        return authorService.getAuthor(authorBookService.getByIdBook(id).getIdAuthor().toString());
     }
 
     /**
@@ -138,7 +143,7 @@ public class BooksController {
         bookService.delete(Long.parseLong(id, 10));
 
         Path link = Paths.get(request.getHeader("Referer")).getParent();
-        return "redirect:" + link;
+        return "redirect:/" + link;
     }
 
     /**
@@ -158,8 +163,8 @@ public class BooksController {
 
         Query query = session.createQuery(
                 "SELECT b, a FROM Book AS b " +
-                        "LEFT JOIN AuthorBook AS ab ON b.id = ab.id_book " +
-                        "LEFT JOIN Author AS a ON a.id = ab.id_author " +
+                        "LEFT JOIN AuthorBook AS ab ON b.id = ab.idBook " +
+                        "LEFT JOIN Author AS a ON a.id = ab.idAuthor " +
                         "WHERE a.lastName LIKE '%" + someText + "%'");
 
         return query.list();

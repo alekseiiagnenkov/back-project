@@ -9,9 +9,7 @@ import javax.persistence.*;
  * Класс роли
  */
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
@@ -23,6 +21,16 @@ public class Role implements GrantedAuthority {
 
     @Column(name = "role")
     private String role;
+
+    public Role setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Role setRole(String role) {
+        this.role = role;
+        return this;
+    }
 
     public String toString() {
         return role;

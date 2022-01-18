@@ -72,7 +72,7 @@ public class AuthorBookService {
      */
     public List<AuthorBook> getByIdAuthor(Long id_author){
         return authorBookRepository.findAll().stream()
-                .filter(ab -> Objects.equals(ab.getId_author(), id_author))
+                .filter(ab -> Objects.equals(ab.getIdAuthor(), id_author))
                 .collect(Collectors.toList());
     }
 
@@ -83,7 +83,7 @@ public class AuthorBookService {
      */
     public AuthorBook getByIdBook(Long id_book) {
         return authorBookRepository.findAll().stream()
-                .filter(id_b -> id_b.getId_book().equals(id_book))
+                .filter(id_b -> id_b.getIdBook().equals(id_book))
                 .findFirst().orElse(null);
     }
 }

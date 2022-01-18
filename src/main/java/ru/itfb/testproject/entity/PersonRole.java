@@ -8,9 +8,7 @@ import javax.persistence.*;
  * Класс связи пользователя и его роли
  */
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "person_role")
 public class PersonRole {
@@ -20,9 +18,24 @@ public class PersonRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Long id_person;
+    @Column(name = "id_person")
+    private Long idPersons;
 
-    @Column
-    private Long id_role;
+    @Column(name = "id_role")
+    private Long idRole;
+
+    public PersonRole setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public PersonRole setIdPersons(Long idPersons) {
+        this.idPersons = idPersons;
+        return this;
+    }
+
+    public PersonRole setIdRole(Long idRole) {
+        this.idRole = idRole;
+        return this;
+    }
 }

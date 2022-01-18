@@ -1,9 +1,7 @@
 package ru.itfb.testproject.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -13,9 +11,7 @@ import java.util.Map;
  * Класс пользователя
  */
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "persons")
 public class Person {
@@ -30,6 +26,21 @@ public class Person {
 
     @Column
     private String password;
+
+    public Person setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Person setUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public Person setPassword(String password) {
+        this.password = password;
+        return this;
+    }
 
     /**
      * Для преобразования в map, так как иногда нужно было добавлять сюда еще и role

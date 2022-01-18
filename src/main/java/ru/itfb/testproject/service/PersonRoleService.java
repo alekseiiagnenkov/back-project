@@ -57,7 +57,7 @@ public class PersonRoleService {
      */
     public PersonRole getByIdPerson(Long id_person) {
         return personRoleRepository.findAll().stream()
-                .filter(id_p -> id_p.getId_person().equals(id_person))
+                .filter(id_p -> id_p.getIdPersons().equals(id_person))
                 .findFirst().orElse(null);
     }
 
@@ -67,7 +67,7 @@ public class PersonRoleService {
      * @return id его роли
      */
     public Long getIdRoleByIdPerson(Long id_person) {
-        return getByIdPerson(id_person).getId_role();
+        return getByIdPerson(id_person).getIdRole();
     }
 
     /**

@@ -7,6 +7,8 @@ import ru.itfb.testproject.entity.PersonRole;
 import ru.itfb.testproject.entity.Role;
 import ru.itfb.testproject.entity.dto.PersonRoleDTO;
 import ru.itfb.testproject.exceptions.RoleNotFound;
+import ru.itfb.testproject.mappers.PersonMapper;
+import ru.itfb.testproject.mappers.RoleMapper;
 import ru.itfb.testproject.service.PersonRoleService;
 import ru.itfb.testproject.service.PersonService;
 import ru.itfb.testproject.service.RoleService;
@@ -49,7 +51,7 @@ public class PersonController {
             try {
                 personMap.put("role:", getRole(person).toString());
             } catch (RoleNotFound e) {
-                System.err.print(e);
+                System.out.print(e);
             }
             AllPersons.add(personMap);
         });
@@ -95,7 +97,6 @@ public class PersonController {
             Person person = getOne(id);
             return new PersonRoleDTO(person.getUsername(), person.getPassword(), getRole(getOne(id)).getRole());
         } catch (RoleNotFound e) {
-            System.err.print(e);
             return new PersonRoleDTO("", "", "");
         }
     }
@@ -161,13 +162,16 @@ public class PersonController {
      */
     @PostMapping
     public Person create(@RequestBody PersonRoleDTO personRoleDTO) {
-        Person person = new Person(-1L, personRoleDTO.getUsername(), personRoleDTO.getPassword());
-        Role role = new Role(-1L, personRoleDTO.getRole());
+        Person person = PersonMapper.dtoToEntity(personRoleDTO);
+        Role role = RoleMapper.dtoToEntity(personRoleDTO);
         if (!hasPerson(person)) {
             personService.save(person);
             if (hasRole(role) == null)
                 roleService.save(role);
-            PersonRole p = new PersonRole(5L, getLastPerson().getId(), getRoleId(role));
+            PersonRole p = new PersonRole()
+                    .setId(-1L)
+                    .setIdPersons(getLastPerson().getId())
+                    .setIdRole(getRoleId(role));
             personRoleService.save(p);
             return getLastPerson();
         }
@@ -185,12 +189,12 @@ public class PersonController {
      */
     @PutMapping("{id}")
     public Person update(@PathVariable String id, @RequestBody PersonRoleDTO personRoleDTO) {
-        Person person = new Person(-1L, personRoleDTO.getUsername(), personRoleDTO.getPassword());
-        Role role = new Role(-1L, personRoleDTO.getRole());
+        Person person = PersonMapper.dtoToEntity(personRoleDTO);
+        Role role = RoleMapper.dtoToEntity(personRoleDTO);
         personService.update(person, Long.parseLong(id, 10));
         Long newId = personRoleService.getIdRoleByIdPerson(Long.parseLong(id, 10));
         if (!roleService.read(newId).getRole().equals(role.getRole())) {
-            personRoleService.update(new PersonRole(1L, Long.parseLong(id, 10), getRoleId(role)), personRoleService.getByIdPerson(Long.parseLong(id, 10)).getId());
+            personRoleService.update(new PersonRole().setId(-1L).setIdPersons(Long.parseLong(id, 10)).setIdRole(getRoleId(role)), personRoleService.getByIdPerson(Long.parseLong(id, 10)).getId());
         }
         return personService.getOne(id);
     }

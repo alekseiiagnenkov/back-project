@@ -94,12 +94,12 @@ public class AuthorsController {
     public String delete(@PathVariable String id, HttpServletRequest request) {
         List<AuthorBook> ids_books = authorBookService.getByIdAuthor(Long.parseLong(id, 10));
         for (AuthorBook it : ids_books) {
-            bookService.delete(it.getId_book());
+            bookService.delete(it.getIdBook());
             authorBookService.delete(it.getId());
         }
         authorService.delete(Long.parseLong(id, 10));
         Path link = Paths.get(request.getHeader("Referer")).getParent();
-        return "redirect:"+ link;
+        return "redirect:/"+ link;
     }
 }
 

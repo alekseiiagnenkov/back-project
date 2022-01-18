@@ -8,9 +8,7 @@ import javax.persistence.*;
  * Класс автора книги
  */
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "authors")
 public class Author {
@@ -25,6 +23,21 @@ public class Author {
 
     @Column(name = "last_name")
     private String lastName;
+
+    public Author setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Author setFirstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+    }
+
+    public Author setLastName(String lastName) {
+        this.lastName = lastName;
+        return this;
+    }
 
     /**
      * Реализация сравнения

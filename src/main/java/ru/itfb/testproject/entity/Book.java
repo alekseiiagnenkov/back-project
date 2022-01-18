@@ -8,9 +8,7 @@ import javax.persistence.*;
  * Класс книги
  */
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "books")
 public class Book {
@@ -22,4 +20,14 @@ public class Book {
 
     @Column
     private String name;
+
+    public Book setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Book setName(String name) {
+        this.name = name;
+        return this;
+    }
 }
