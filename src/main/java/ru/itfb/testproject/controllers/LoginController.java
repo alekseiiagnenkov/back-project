@@ -31,10 +31,4 @@ public class LoginController {
     public String postLogin() {
         return "redirect:/";
     }
-
-    private void validatePrinciple(Object principal) {
-        if (!(principal instanceof Person)) {
-            throw new  IllegalArgumentException("Principal can not be null!");
-        }
-    }
 }
