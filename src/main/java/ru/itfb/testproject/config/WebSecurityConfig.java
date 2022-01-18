@@ -3,23 +3,16 @@ package ru.itfb.testproject.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import ru.itfb.testproject.exceptions.RoleNotFound;
 import ru.itfb.testproject.service.PersonRoleService;
 import ru.itfb.testproject.service.PersonService;
 import ru.itfb.testproject.service.RoleService;
-
-import java.util.ArrayList;
-import java.util.List;
+import ru.itfb.testproject.service.UserDetailsServiceImpl;
 
 /**
  * Spring Security
@@ -47,19 +40,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.roleService = roleService;
     }
 
-
-/*    @Autowired
-    private DataSource dataSource;
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication().dataSource(dataSource);
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }*/
+    /**
+     * Передаем в конфигурацию собственные UserDetails и PasswordEncoder
+     * @param auth куда передаем конфигурацию
+     * @throws Exception
+     */
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(new UserDetailsServiceImpl(personService, personRoleService, roleService)).passwordEncoder(new MyPasswordEncoder());
+    }
 
     /**
      * Функция, описывающая разрешенные страницы и страницу авторизации. Так же можно указать доступ к запросам
@@ -68,55 +63,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/books", "/books/{id}", "/authors", "/authors/{id}", "/about", "/login").permitAll()
-                .antMatchers("/users/**").hasRole("ADMIN")
-
-                .anyRequest().authenticated()
+                    .antMatchers("/books", "/books/{id}", "/authors", "/authors/{id}", "/about", "/login").permitAll()
+                    .antMatchers("/users/**").hasRole("ADMIN")
+                    .anyRequest().authenticated()
                 .and()
-                .formLogin().loginPage("/login").permitAll()
+                    .formLogin().loginPage("/login").usernameParameter("username").passwordParameter("password").permitAll()
+                    .successForwardUrl("/postLogin")
                 .and()
-                .logout().permitAll();
+                    .logout().logoutSuccessUrl("/logout").permitAll();
     }
-
-    /**
-     * Загрузка пользователей из БД и сохранение их в программу
-     */
-    @Bean
-    @Override
-    public UserDetailsService userDetailsService() {
-        List<UserDetails> participants = new ArrayList<>();
-
-        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        personService.readAll()
-                .forEach(participant -> {
-                            participants.add(
-                                    User.builder()
-                                            .username(participant.getUsername())
-                                            .password(encoder.encode(participant.getPassword()))
-                                            .roles(roleService.read(personRoleService.getIdRoleByIdPerson(participant.getId())).toString())
-                                            .build()
-                            );
-                        }
-                );
-
-        return new InMemoryUserDetailsManager(participants);
-    }
-
-    /**
-     * Загрузка пользователей в программу
-     */
-/*    public UserDetailsService userDetailsServiceBean(Person person) {
-
-        try {
-            return new InMemoryUserDetailsManager(
-                    User.builder()
-                            .username(person.getUsername())
-                            .password(person.getPassword())
-                            .roles(roleService.read(personRoleService.getIdRoleByIdPerson(person.getId())).toString())
-                            .build());
-        } catch (RoleNotFound e) {
-            System.err.print(e);
-            return null;
-        }
-    }*/
 }

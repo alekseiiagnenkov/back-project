@@ -11,12 +11,16 @@ import java.util.List;
  * Тут прописывал основные функции, в которых нужна была связь с БД
  */
 @Service
-public class PersonService {
+public class PersonService{
 
-    private final PersonRepository personRepository;
+    private PersonRepository personRepository;
 
     public PersonService(PersonRepository personRepository) {
         this.personRepository = personRepository;
+    }
+
+    public Person findPersonByUsername(String username){
+        return personRepository.findUserByUsername(username);
     }
 
     /**

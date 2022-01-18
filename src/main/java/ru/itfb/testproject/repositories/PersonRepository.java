@@ -9,4 +9,5 @@ import ru.itfb.testproject.entity.Person;
  */
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
+    Person findUserByUsername(String username);
 }

@@ -1,6 +1,7 @@
 package ru.itfb.testproject.entity;
 
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "roles")
-public class Role {
+public class Role implements GrantedAuthority {
 
     @Id
     @Column(name = "id")
@@ -37,5 +38,10 @@ public class Role {
             return true;
         }
         return role.getRole().equals(this.getRole());
+    }
+
+    @Override
+    public String getAuthority() {
+        return role;
     }
 }
