@@ -12,8 +12,8 @@
 <h1 th:inline="text" class="me-3 py-2 text-dark text-decoration-none">
 
     <div th:if="${(#httpServletRequest.remoteUser)} != null">
-        <h1 class="fw-light" th:text="'Username:' + ${person.getUsername()}"></h1>
-        <h1 class="fw-light" th:text="'Role:' + ${person.getRole()}"></h1>
+        <h1 class="fw-light" th:text="'Username:  ' + ${person.getUsername()}"></h1>
+        <h1 class="fw-light" th:text="'Role:  ' + ${person.getRole()}"></h1>
     </div>
 
     <div th:if="${(#httpServletRequest.remoteUser)} == null">
