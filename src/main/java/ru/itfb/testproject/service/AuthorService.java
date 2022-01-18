@@ -24,6 +24,7 @@ public class AuthorService {
      * @param author автор, которого нужно сохранить
      */
     public void save(Author author) {
+        author.setId(-1L);
         authorRepository.save(author);
     }
 
@@ -42,11 +43,14 @@ public class AuthorService {
      * @return true, если обновилось, false если не нашел такого
      */
     public boolean update(Author author, Long id) {
-        if (authorRepository.existsById(id)) {
-            author.setId(id);
-            authorRepository.save(author);
-            return true;
-        }
+        if (hasAuthor(author))
+            if (getAuthorId(author).equals(id)) {
+                if (authorRepository.existsById(id)) {
+                    author.setId(id);
+                    authorRepository.save(author);
+                    return true;
+                }
+            }
         return false;
     }
 

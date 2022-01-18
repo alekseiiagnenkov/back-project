@@ -65,7 +65,7 @@ public class BooksController {
      * @return файл отображения book.html
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public String getOne(@PathVariable String id, Model model, HttpServletRequest request) throws BookNotFound {
+    public String getOne(@PathVariable String id, Model model) throws BookNotFound {
         Book book = bookService.getBook(id);
         Author author = authorService.getAuthor(book.getId().toString());
         model.addAttribute("author", author);
@@ -96,7 +96,7 @@ public class BooksController {
             AuthorBook ab = new AuthorBook()
                     .setId(-1L)
                     .setIdAuthor(authorService.getAuthorId(author))
-                    .setIdBook(bookService.getLastBook().getId()); //TODO или тут нужно проверять на то, свободно ли там?
+                    .setIdBook(bookService.getLastBook().getId());
             authorBookService.save(ab);
             return bookService.getLastBook();
         }
@@ -141,7 +141,6 @@ public class BooksController {
     public String delete(@PathVariable String id, HttpServletRequest request) {
         authorBookService.delete(authorBookService.getByIdBook(Long.parseLong(id, 10)).getId());
         bookService.delete(Long.parseLong(id, 10));
-
         Path link = Paths.get(request.getHeader("Referer")).getParent();
         return "redirect:/" + link;
     }

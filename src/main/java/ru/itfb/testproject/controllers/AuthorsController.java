@@ -33,10 +33,11 @@ public class AuthorsController {
 
     /**
      * Визуализация GET запроса для всех авторов
+     *
      * @param model для передачи параметров в html страницу для их отображения
      * @return файл отображения authors.html
      */
-    @RequestMapping (method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public String getAuthors(Model model) {
         model.addAttribute("authors", authorService.readAll());
         return "authors";
@@ -44,14 +45,14 @@ public class AuthorsController {
 
     /**
      * визуализация GET запроса для определенного автора
-     * @param id уникальный идентификатор нашего автора
+     *
+     * @param id    уникальный идентификатор нашего автора
      * @param model для передачи параметров в html страницу для их отображения
      * @return файл отображения author.html
      */
-    @RequestMapping (value = "{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public String getOne(@PathVariable String id, Model model) {
-        Author author = authorService.getAuthor(id);
-        model.addAttribute("author", author);
+        model.addAttribute("author", authorService.getAuthor(id));
         model.addAttribute("model", model);
         model.addAttribute("view", this);
         return "author";
@@ -59,38 +60,38 @@ public class AuthorsController {
 
     /**
      * POST запрос, визуализации нет, не успел
+     *
      * @param author новый автор
      * @return нового автора
      */
-    @RequestMapping ( method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public Author create(@RequestBody Author author) {
-        author.setId(-1L);
         authorService.save(author);
         return author;
     }
 
     /**
      * PUT запрос, визуализации нет, не успел
-     * @param id уникальный идентификатор автора, которого будем менять
+     *
+     * @param id     уникальный идентификатор автора, которого будем менять
      * @param author новые данные этого автора
-     * @return измененного автора
+     * @return измененного автора или null
      */
-    @RequestMapping (value = "{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public Author update(@PathVariable String id, @RequestBody Author author) {
-        if (authorService.hasAuthor(author))
-            if (authorService.getAuthorId(author) == Long.parseLong(id, 10))
-                authorService.update(author, Long.parseLong(id, 10));
-        return author;
+        authorService.update(author, Long.parseLong(id, 10));
+        return authorService.getAuthor(id);
     }
 
     /**
      * DELETE запрос для удаления автора из БД
      * После удаления переносит в /authors
-     * @param id уникальный идентификатор автора, которого будем удалять
+     *
+     * @param id      уникальный идентификатор автора, которого будем удалять
      * @param request необходим для возврата на предыдущие страницы после удаления автора
      * @return переход на страницу со всеми авторами
      */
-    @RequestMapping (value = "{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable String id, HttpServletRequest request) {
         List<AuthorBook> ids_books = authorBookService.getByIdAuthor(Long.parseLong(id, 10));
         for (AuthorBook it : ids_books) {
@@ -99,7 +100,7 @@ public class AuthorsController {
         }
         authorService.delete(Long.parseLong(id, 10));
         Path link = Paths.get(request.getHeader("Referer")).getParent();
-        return "redirect:/"+ link;
+        return "redirect:/" + link;
     }
 }
 

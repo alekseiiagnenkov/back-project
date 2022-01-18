@@ -35,6 +35,31 @@ public class RoleService {
     }
 
     /**
+     * Получить id переданной роли
+     *
+     * @param role переданная роль
+     * @return id role
+     */
+    public Long getRoleId(Role role) {
+        Role it = readAll().stream()
+                .filter(r -> r.equals(role))
+                .findFirst().orElse(null);
+        return it != null ? it.getId() : readAll().size();
+    }
+
+    /**
+     * Проверка на наличие переданной роли
+     *
+     * @param role переданная роль
+     * @return если есть, то передает ее, иначе null
+     */
+    public Role hasRole(Role role) {
+        return readAll().stream()
+                .filter(r -> r.equals(role))
+                .findFirst().orElse(null);
+    }
+
+    /**
      * Считывание всех ролей из БД
      * @return лист ролей
      */

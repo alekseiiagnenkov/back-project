@@ -2,6 +2,7 @@ package ru.itfb.testproject.service;
 
 import org.springframework.stereotype.Service;
 import ru.itfb.testproject.entity.Person;
+import ru.itfb.testproject.entity.Role;
 import ru.itfb.testproject.repositories.PersonRepository;
 
 import java.util.List;
@@ -65,6 +66,30 @@ public class PersonService{
             return true;
         }
         return false;
+    }
+
+    /**
+     * Получить последнего добавленного пользователя
+     * Нужно чтобы при создании связи между Ролью и
+     * Пользователем узнать реальный id пользователя
+     *
+     * @return пользователя
+     */
+    public Person getLastPerson() {
+        return readAll().get(readAll().size() - 1);
+    }
+
+    /**
+     * Проверка на наличие переанного пользователя
+     *
+     * @param person переданный пользователь
+     * @return если есть, то передает его, иначе null
+     */
+    public boolean hasPerson(Person person) {
+        Person pers = readAll().stream()
+                .filter(p -> p.getUsername().equals(person.getUsername()))
+                .findFirst().orElse(null);
+        return pers != null;
     }
 
     /**

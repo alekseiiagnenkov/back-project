@@ -51,7 +51,7 @@ public class PersonController {
             try {
                 personMap.put("role:", getRole(person).toString());
             } catch (RoleNotFound e) {
-                System.out.print(e);
+                e.printStackTrace();
             }
             AllPersons.add(personMap);
         });
@@ -59,7 +59,7 @@ public class PersonController {
     }
 
     /**
-     * GET запрос для получения роли пользователя
+     * Для получения роли пользователя
      *
      * @param person пользователь, роль которого мы хотим узнать
      * @return роль person
@@ -72,19 +72,6 @@ public class PersonController {
     }
 
     /**
-     * GET запрос для одного пользователя
-     *
-     * @param id уникальный идентификатор пользователя
-     * @return пользователя или ничего, если пользователя с таким id нет
-     */
-    public Person getOne(String id) {
-        return personService.readAll().stream()
-                .filter(person -> person.getId() == Long.parseLong(id, 10))
-                .findFirst()
-                .orElse(null);
-    }
-
-    /**
      * GET запрос для получения пользователя по id
      * Будет пусто, если такой пользователь не найден
      *
@@ -94,60 +81,11 @@ public class PersonController {
     @GetMapping("{id}")
     public PersonRoleDTO getPerson(@PathVariable String id) {
         try {
-            Person person = getOne(id);
-            return new PersonRoleDTO(person.getUsername(), person.getPassword(), getRole(getOne(id)).getRole());
+            Person person = personService.getOne(id);
+            return new PersonRoleDTO(person.getUsername(), person.getPassword(), getRole(personService.getOne(id)).getRole());
         } catch (RoleNotFound e) {
             return new PersonRoleDTO("", "", "");
         }
-    }
-
-    /**
-     * Получить последнего добавленного пользователя
-     * Нужно чтобы при создании связи между Ролью и
-     * Пользователем узнать реальный id пользователя
-     *
-     * @return пользователя
-     */
-    private Person getLastPerson() {
-        return personService.readAll().get(personService.readAll().size() - 1);
-    }
-
-    /**
-     * Получить id переданной роли
-     *
-     * @param role переданная роль
-     * @return id role
-     */
-    private Long getRoleId(Role role) {
-        Role it = roleService.readAll().stream()
-                .filter(r -> r.equals(role))
-                .findFirst().orElse(null);
-        return it != null ? it.getId() : roleService.readAll().size();
-    }
-
-    /**
-     * Проверка на наличие переданной роли
-     *
-     * @param role переданная роль
-     * @return если есть, то передает ее, иначе null
-     */
-    private Role hasRole(Role role) {
-        return roleService.readAll().stream()
-                .filter(r -> r.equals(role))
-                .findFirst().orElse(null);
-    }
-
-    /**
-     * Проверка на наличие переанного пользователя
-     *
-     * @param person переданный пользователь
-     * @return если есть, то передает его, иначе null
-     */
-    private boolean hasPerson(Person person) {
-        Person pers = personService.readAll().stream()
-                .filter(p -> p.getUsername().equals(person.getUsername()))
-                .findFirst().orElse(null);
-        return pers != null;
     }
 
     /**
@@ -164,16 +102,16 @@ public class PersonController {
     public Person create(@RequestBody PersonRoleDTO personRoleDTO) {
         Person person = PersonMapper.dtoToEntity(personRoleDTO);
         Role role = RoleMapper.dtoToEntity(personRoleDTO);
-        if (!hasPerson(person)) {
+        if (!personService.hasPerson(person)) {
             personService.save(person);
-            if (hasRole(role) == null)
+            if (roleService.hasRole(role) == null)
                 roleService.save(role);
             PersonRole p = new PersonRole()
                     .setId(-1L)
-                    .setIdPersons(getLastPerson().getId())
-                    .setIdRole(getRoleId(role));
+                    .setIdPersons(personService.getLastPerson().getId())
+                    .setIdRole(roleService.getRoleId(role));
             personRoleService.save(p);
-            return getLastPerson();
+            return personService.getLastPerson();
         }
         return null;
     }
@@ -185,7 +123,6 @@ public class PersonController {
      * @param id            уникальный идентификатор пользователя
      * @param personRoleDTO пользователь+роль
      * @return пользователь+роль
-     * @throws RoleNotFound если не найдена роль (такого вроде н может быть)
      */
     @PutMapping("{id}")
     public Person update(@PathVariable String id, @RequestBody PersonRoleDTO personRoleDTO) {
@@ -194,7 +131,7 @@ public class PersonController {
         personService.update(person, Long.parseLong(id, 10));
         Long newId = personRoleService.getIdRoleByIdPerson(Long.parseLong(id, 10));
         if (!roleService.read(newId).getRole().equals(role.getRole())) {
-            personRoleService.update(new PersonRole().setId(-1L).setIdPersons(Long.parseLong(id, 10)).setIdRole(getRoleId(role)), personRoleService.getByIdPerson(Long.parseLong(id, 10)).getId());
+            personRoleService.update(new PersonRole().setId(-1L).setIdPersons(Long.parseLong(id, 10)).setIdRole(roleService.getRoleId(role)), personRoleService.getByIdPerson(Long.parseLong(id, 10)).getId());
         }
         return personService.getOne(id);
     }
