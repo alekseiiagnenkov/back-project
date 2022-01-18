@@ -1,12 +1,15 @@
 <div th:fragment = "header">
     <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
         <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+            <div th:switch="${(#httpServletRequest.isUserInRole('ADMIN'))}" class="me-3 py-2 text-dark text-decoration-none">
+                <a th:case="true" class="me-3 py-2 text-dark text-decoration-none" href="users">Users</a>
+            </div>
             <a class="me-3 py-2 text-dark text-decoration-none" href="authors">Authors</a>
             <a class="me-3 py-2 text-dark text-decoration-none" href="books">Books</a>
             <a class="me-3 py-2 text-dark text-decoration-none" href="about">About</a>
             <div th:switch="${(#httpServletRequest.remoteUser)}" class="me-3 py-2 text-dark text-decoration-none">
-                <a th:case="null" href="login">Login</a>
-                <a th:case="*" href="logout">Logout</a>
+                <a  th:case="null" class="me-3 py-2 text-dark text-decoration-none" href="/login">Login</a>
+                <a th:case="*" class="me-3 py-2 text-dark text-decoration-none" href="/logout">Logout</a>
             </div>
         </nav>
     </div>
