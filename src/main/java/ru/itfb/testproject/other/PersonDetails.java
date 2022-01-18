@@ -1,4 +1,4 @@
-package ru.itfb.testproject;
+package ru.itfb.testproject.other;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

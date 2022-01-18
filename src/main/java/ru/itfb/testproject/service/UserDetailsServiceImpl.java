@@ -3,7 +3,7 @@ package ru.itfb.testproject.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import ru.itfb.testproject.PersonDetails;
+import ru.itfb.testproject.other.PersonDetails;
 import ru.itfb.testproject.entity.Person;
 
 /**

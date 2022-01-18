@@ -1,4 +1,4 @@
-package ru.itfb.testproject.config;
+package ru.itfb.testproject.other;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
