@@ -15,8 +15,6 @@ import ru.itfb.testproject.service.PersonService;
 import ru.itfb.testproject.service.RoleService;
 import ru.itfb.testproject.service.UserDetailsServiceImpl;
 
-import javax.sql.DataSource;
-
 /**
  * Spring Security
  * Для авторизации пользователей
