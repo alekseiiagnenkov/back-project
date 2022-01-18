@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class testProjectApplication {
 
     public static void main(String[] args) {
-        log.info("Start application");
         SpringApplication.run(testProjectApplication.class, args);
     }
 
