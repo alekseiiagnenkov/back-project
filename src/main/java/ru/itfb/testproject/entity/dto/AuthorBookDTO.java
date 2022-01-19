@@ -6,9 +6,7 @@ import lombok.*;
  * Класс для передачи одновременно автора и книги
  */
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class AuthorBookDTO {
 
     //Person
@@ -19,4 +17,18 @@ public class AuthorBookDTO {
     //Book
     private String bookName;
 
+    public AuthorBookDTO setPersonFirstName(String personFirstName) {
+        this.personFirstName = personFirstName;
+        return this;
+    }
+
+    public AuthorBookDTO setPersonLastName(String personLastName) {
+        this.personLastName = personLastName;
+        return this;
+    }
+
+    public AuthorBookDTO setBookName(String bookName) {
+        this.bookName = bookName;
+        return this;
+    }
 }
