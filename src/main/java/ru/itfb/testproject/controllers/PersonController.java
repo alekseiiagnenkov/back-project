@@ -3,19 +3,13 @@ package ru.itfb.testproject.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.itfb.testproject.entity.Person;
-import ru.itfb.testproject.entity.PersonRole;
 import ru.itfb.testproject.entity.Role;
 import ru.itfb.testproject.entity.dto.PersonRoleDTO;
-import ru.itfb.testproject.exceptions.RoleNotFound;
 import ru.itfb.testproject.mappers.PersonMapper;
-import ru.itfb.testproject.mappers.RoleMapper;
-import ru.itfb.testproject.service.PersonRoleService;
 import ru.itfb.testproject.service.PersonService;
-import ru.itfb.testproject.service.RoleService;
 
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Контроллер для {@link Person}(для всех авторизированных пользователей)
@@ -24,18 +18,30 @@ import java.util.Map;
  * --------ДОСТУПЕН ТОЛЬКО для пользователя admin--------
  */
 @RestController
-@RequestMapping("users")
 public class PersonController {
 
     private final PersonService personService;
-    private final RoleService roleService;
-    private final PersonRoleService personRoleService;
 
     @Autowired
-    public PersonController(PersonService personService, RoleService roleService, PersonRoleService personRoleService) {
+    public PersonController(PersonService personService) {
         this.personService = personService;
-        this.roleService = roleService;
-        this.personRoleService = personRoleService;
+    }
+
+    /**
+     * Дает информацию об авторизированном пользователе
+     *
+     * @param request чтобы получить информацию о пользователе
+     * @return страницу about.html
+     */
+    @RequestMapping(value = "about", method = RequestMethod.GET)
+    public String about(HttpServletRequest request, PersonMapper personMapper) {
+        Person person = personService.findPersonByUsername(request.getRemoteUser());
+
+        if (person != null) {
+            return personMapper.PersonToDto(person, personService).toString();
+        } else {
+            return "Not authorized";
+        }
     }
 
     /**
@@ -43,32 +49,12 @@ public class PersonController {
      *
      * @return массив всех пользователей вместе с их ролями
      */
-    @GetMapping
-    public List<Map<String, String>> getPersons() {
-        List<Map<String, String>> AllPersons = new ArrayList<>();
-        personService.readAll().forEach(person -> {
-            Map<String, String> personMap = person.toMap();
-            try {
-                personMap.put("role:", getRole(person).toString());
-            } catch (RoleNotFound e) {
-                e.printStackTrace();
-            }
-            AllPersons.add(personMap);
-        });
-        return AllPersons;
-    }
-
-    /**
-     * Для получения роли пользователя
-     *
-     * @param person пользователь, роль которого мы хотим узнать
-     * @return роль person
-     * @throws RoleNotFound ошибка, если не нашли такого пользователя
-     */
-    public Role getRole(Person person) throws RoleNotFound {
-        if (person == null)
-            return null;
-        return roleService.read(personRoleService.getIdRoleByIdPerson(person.getId()));
+    @RequestMapping(value = "users", method = RequestMethod.GET)
+    public List<PersonRoleDTO> getPersons(PersonMapper personMapper) {
+        return personService.readAll()
+                .stream()
+                .map(person -> personMapper.PersonToDto(person, personService))
+                .toList();
     }
 
     /**
@@ -78,14 +64,9 @@ public class PersonController {
      * @param id уникальный идентификатор пользователя
      * @return пользователя с ролью или пустоту
      */
-    @GetMapping("{id}")
-    public PersonRoleDTO getPerson(@PathVariable String id) {
-        try {
-            Person person = personService.getOne(id);
-            return new PersonRoleDTO(person.getUsername(), person.getPassword(), getRole(personService.getOne(id)).getRole());
-        } catch (RoleNotFound e) {
-            return new PersonRoleDTO("", "", "");
-        }
+    @RequestMapping(value = "users/{id}", method = RequestMethod.GET)
+    public PersonRoleDTO getPerson(@PathVariable String id, PersonMapper personMapper) {
+        return personMapper.PersonToDto(personService.getOne(id), personService);
     }
 
     /**
@@ -98,22 +79,12 @@ public class PersonController {
      * @param personRoleDTO пользователь+роль
      * @return пользователь+роль
      */
-    @PostMapping
-    public Person create(@RequestBody PersonRoleDTO personRoleDTO) {
-        Person person = PersonMapper.dtoToEntity(personRoleDTO);
-        Role role = RoleMapper.dtoToEntity(personRoleDTO);
-        if (!personService.hasPerson(person)) {
-            personService.save(person);
-            if (roleService.hasRole(role) == null)
-                roleService.save(role);
-            PersonRole p = new PersonRole()
-                    .setId(-1L)
-                    .setIdPersons(personService.getLastPerson().getId())
-                    .setIdRole(roleService.getRoleId(role));
-            personRoleService.save(p);
-            return personService.getLastPerson();
-        }
-        return null;
+    @RequestMapping(value = "users", method = RequestMethod.POST)
+    public boolean create(@RequestBody PersonRoleDTO personRoleDTO, PersonMapper personMapper) {
+        Person person = personMapper.dtoToPerson(personRoleDTO);
+        Role role = personMapper.dtoToRole(personRoleDTO);
+        return personService.save(person, role);
+
     }
 
     /**
@@ -125,15 +96,10 @@ public class PersonController {
      * @return пользователь+роль
      */
     @PutMapping("{id}")
-    public Person update(@PathVariable String id, @RequestBody PersonRoleDTO personRoleDTO) {
-        Person person = PersonMapper.dtoToEntity(personRoleDTO);
-        Role role = RoleMapper.dtoToEntity(personRoleDTO);
-        personService.update(person, Long.parseLong(id, 10));
-        Long newId = personRoleService.getIdRoleByIdPerson(Long.parseLong(id, 10));
-        if (!roleService.read(newId).getRole().equals(role.getRole())) {
-            personRoleService.update(new PersonRole().setId(-1L).setIdPersons(Long.parseLong(id, 10)).setIdRole(roleService.getRoleId(role)), personRoleService.getByIdPerson(Long.parseLong(id, 10)).getId());
-        }
-        return personService.getOne(id);
+    public boolean update(@PathVariable String id, @RequestBody PersonRoleDTO personRoleDTO, PersonMapper personMapper) {
+        Person person = personMapper.dtoToPerson(personRoleDTO);
+        Role role = personMapper.dtoToRole(personRoleDTO);
+        return personService.update(person, role, Long.parseLong(id, 10));
     }
 
     /**
@@ -144,7 +110,6 @@ public class PersonController {
      */
     @DeleteMapping("{id}")
     public void delete(@PathVariable String id) {
-        personRoleService.delete(personRoleService.getByIdPerson(Long.parseLong(id, 10)).getId());
         personService.delete(Long.parseLong(id, 10));
     }
 }

@@ -67,7 +67,7 @@ public class PersonRoleService {
      * @return id его роли
      */
     public Long getIdRoleByIdPerson(Long id_person) {
-        return getByIdPerson(id_person).getIdRole();
+        return getByIdPerson(id_person)==null? -1: getByIdPerson(id_person).getIdRole();
     }
 
     /**
