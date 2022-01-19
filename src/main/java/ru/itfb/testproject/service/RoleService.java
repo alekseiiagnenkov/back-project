@@ -30,6 +30,9 @@ public class RoleService {
         roleRepository.save(role);
     }
 
+    /**
+     * Считывание всех ролей
+     */
     public List<Role> readAll() {
         return roleRepository.findAll();
     }
