@@ -2,17 +2,16 @@ package ru.itfb.testproject.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import ru.itfb.testproject.entity.Author;
-import ru.itfb.testproject.entity.AuthorBook;
-import ru.itfb.testproject.service.AuthorBookService;
 import ru.itfb.testproject.service.AuthorService;
-import ru.itfb.testproject.service.BookService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * Контроллер для {@link Author}
@@ -21,14 +20,10 @@ import java.util.List;
 @RequestMapping("authors")
 public class AuthorsController {
 
-    private final BookService bookService;
     private final AuthorService authorService;
-    private final AuthorBookService authorBookService;
 
-    public AuthorsController(BookService bookService, AuthorService authorService, AuthorBookService authorBookService) {
-        this.bookService = bookService;
+    public AuthorsController(AuthorService authorService) {
         this.authorService = authorService;
-        this.authorBookService = authorBookService;
     }
 
     /**
@@ -44,7 +39,7 @@ public class AuthorsController {
     }
 
     /**
-     * визуализация GET запроса для определенного автора
+     * Визуализация GET запроса для определенного автора
      *
      * @param id    уникальный идентификатор нашего автора
      * @param model для передачи параметров в html страницу для их отображения
@@ -78,9 +73,8 @@ public class AuthorsController {
      * @return измененного автора или null
      */
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public Author update(@PathVariable String id, @RequestBody Author author) {
-        authorService.update(author, Long.parseLong(id, 10));
-        return authorService.getAuthor(id);
+    public boolean update(@PathVariable String id, @RequestBody Author author) {
+        return authorService.update(author, Long.parseLong(id, 10));
     }
 
     /**
@@ -93,12 +87,8 @@ public class AuthorsController {
      */
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable String id, HttpServletRequest request) {
-        List<AuthorBook> ids_books = authorBookService.getByIdAuthor(Long.parseLong(id, 10));
-        for (AuthorBook it : ids_books) {
-            bookService.delete(it.getIdBook());
-            authorBookService.delete(it.getId());
-        }
         authorService.delete(Long.parseLong(id, 10));
+
         Path link = Paths.get(request.getHeader("Referer")).getParent();
         return "redirect:/" + link;
     }

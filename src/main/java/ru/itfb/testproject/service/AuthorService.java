@@ -2,6 +2,7 @@ package ru.itfb.testproject.service;
 
 import org.springframework.stereotype.Service;
 import ru.itfb.testproject.entity.Author;
+import ru.itfb.testproject.entity.AuthorBook;
 import ru.itfb.testproject.repositories.AuthorRepository;
 
 import java.util.List;
@@ -14,9 +15,13 @@ import java.util.List;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final BookService bookService;
+    private final AuthorBookService authorBookService;
 
-    public AuthorService(AuthorRepository authorRepository) {
+    public AuthorService(AuthorRepository authorRepository, BookService bookService, AuthorBookService authorBookService) {
         this.authorRepository = authorRepository;
+        this.bookService = bookService;
+        this.authorBookService = authorBookService;
     }
 
     /**
@@ -60,6 +65,11 @@ public class AuthorService {
      * @return true, если удалилось, false если не нашел такого
      */
     public boolean delete(Long id) {
+        List<AuthorBook> ids_books = authorBookService.getByIdAuthor(id);
+        for (AuthorBook it : ids_books) {
+            bookService.delete(it.getIdBook());
+            authorBookService.delete(it.getId());
+        }
         if (authorRepository.existsById(id)) {
             authorRepository.deleteById(id);
             return true;
