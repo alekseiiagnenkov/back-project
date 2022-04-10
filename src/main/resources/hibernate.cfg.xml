@@ -5,7 +5,7 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</property>
-        <property name="connection.url">jdbc:postgresql://localhost:5432/postgres</property>
+        <property name="connection.url">jdbc:postgresql://localhost:5432/backproject</property>
         <property name="connection.driver_class">org.postgresql.Driver</property>
 
         <!-- NOTE that after automapping with IDEA property username and password will delete -->
@@ -13,12 +13,12 @@
         <property name="connection.username">postgres</property>
         <property name="connection.password">postgres</property>
         <!-- NOTE that after automapping with IDEA property username and password will delete -->
-        <mapping class="ru.itfb.testproject.entity.Author"/>
-        <mapping class="ru.itfb.testproject.entity.Book"/>
-        <mapping class="ru.itfb.testproject.entity.AuthorBook"/>
-        <mapping class="ru.itfb.testproject.entity.Person"/>
-        <mapping class="ru.itfb.testproject.entity.PersonRole"/>
-        <mapping class="ru.itfb.testproject.entity.Role"/>
+        <mapping class="ru.itfb.backproject.entity.Author"/>
+        <mapping class="ru.itfb.backproject.entity.Book"/>
+        <mapping class="ru.itfb.backproject.entity.AuthorBook"/>
+        <mapping class="ru.itfb.backproject.entity.Person"/>
+        <mapping class="ru.itfb.backproject.entity.PersonRole"/>
+        <mapping class="ru.itfb.backproject.entity.Role"/>
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hbm2ddl.auto">update</property> -->
     </session-factory>
